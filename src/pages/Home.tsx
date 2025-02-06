@@ -1,127 +1,50 @@
-//import { useState } from 'react'
-import './Home.css'
-import TextBox from '../components/TextBox.tsx';
-import ResultBox from '../components/ResultBox.tsx';
-import 'bootstrap/dist/css/bootstrap.min.css'
-import {Container, Row, Col, Button, Stack} from 'react-bootstrap'
-import { ClipboardIcon} from '../components/Icons.tsx'
-import "../assets/react.svg"
 
+import './Home.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import {Container, Col} from 'react-bootstrap'
+import "../assets/react.svg"
+import {Outlet} from "react-router-dom";
 import {useStore} from "../hooks/useStore.tsx";
-import {SectionType} from "../types.d";
 import useUser from "../hooks/useUser.ts";
-import {useState} from "react";
-import {getContext} from "../services/getContext.ts";
-import {setContext} from "../services/setContext.ts";
-import ChatBox from "../components/ChatBox.tsx";
+import {useState, useCallback, useMemo} from "react";
 import MainHeader from "../components/MainHeader.tsx";
-//import {postChat} from "../services/postChat.ts";
-import EditableTextBox from "../components/EditableTextBox.tsx";
+//import {postChat} from "../services/postChat.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import DropdownMenu from '../components/DropdownMenu.jsx';
 import DragAndDrop from '../components/DragAndDrop.jsx';
 import UrlInput from '../components/UrlInput.jsx';
 import ChatList from '../components/ChatList.tsx';
+import Generator from '../components/Generator.tsx';
 
 
 function HomePage () {
 
 
     const{
-        text1,
-        text2,
-        text3,
-        result,
-        loading,
         chat,
-        newMessage,
-        showModal,
-        editedText,
         chats,
-        currentChatId,
-        //addChat,
-        setResult,
-        changeText1,
-        changeText2,
-        changeText3,
-        setLoad,
         setChat,
-        setNewMessage,
-        //setMessages,
-        //setAIMessage,
-        setShowModal,
-        setEditedText,
-        updateChatMessages,
-        updateChatAIMessages,
         setCurrentChatId,
     }=useStore()
     const [hovering, setHovering] = useState(true);
-    const [showAdditionalContent, setShowAdditionalContent] = useState(false);
     const { addChatUser } = useUser();
-    const handleTextChange =  async () => {
-        // Aquí puedes realizar peticiones al backend con los textos y obtener el resultado
-        // setResult(nuevoResultado);
-        //setResult(result)
-        // getContext().then(text3=>{changeText3(text3)}).catch(()=>changeText3('error'))
-        //await getQuestion().then(result=>{setResult(result)}).catch(()=>setResult('error'))
-        setLoad(true)
-        await setContext(text1 + '|||' + text2 + '|||' + text3).then(result=>{
 
-            setResult(result)
 
-        }).catch(()=>setResult('error'))
-        setLoad(false)
-    };
 
-    const handleGetContext = async ()=> {
-        setLoad(true)
-        await getContext(text3).then(text2=>{
-            changeText2(text2)
-            setEditedText(text2)
-        }
-        ).catch(()=>changeText2('error'))
-        setShowAdditionalContent(true)
-        setLoad(false)
-
-    }
     const handleSetChat = () =>{
         setChat(!chat)
     }
 
-    const handleSendMessage = async () => {
-        console.log("boton")
-        if (newMessage.trim() !== "") {
-            console.log("boton")
-            setLoad(true)
-            const mensaje = newMessage
-            const messages = chats.flatMap((chat) => chat.messages)
-            const aimessages = chats.flatMap((chat) => chat.aimessages)
-            setNewMessage("")
-            // Agregar el nuevo mensaje al estado de mensajes
-
-            updateChatMessages(currentChatId,[...messages, mensaje])
 
 
-            //const chatr = await postChat(mensaje);
-            updateChatAIMessages(currentChatId,[...aimessages, "chatr"])
-            // Limpiar el campo de texto después de enviar el mensaje
+    const handleMouseHover = useCallback(() => {
+        setHovering(prev => prev || true);
+    }, []);
 
-            setLoad(false)
-
-        }
-    };
-
-    const handleClipboard = () => {
-        navigator.clipboard.writeText(result).catch(() => {})
-    }
-
-    const handleMouseHover = () =>{
-      setHovering(true);
-    };
-    const handleMouseLeave = () =>{
-        setHovering(false);
-    };
+    const handleMouseLeave = useCallback(() => {
+        setHovering(prev => prev && false);
+    }, []);
 
     const handleNewChat = async () => {
         //const newChatId = BigInt(Math.floor(Date.now() / 1000)); // Convierte el tiempo actual en segundos a BigInt
@@ -136,143 +59,27 @@ function HomePage () {
     return (
 
         <Container style={{margin: '0' , padding:'0', width:'100vw', height:'100vh', overflow:'hidden'}}>
-
             <Container onMouseOver={handleMouseHover} onMouseOut={handleMouseLeave}  style={{
                 position: "absolute",
                 height: "5vw",
                 top: "0px",
-                left: "0px",
+                left: "15vw",
                 maxWidth:"none",
                 width: "100vw", // Fondo para identificar la zona
                 zIndex: "10000",
             }}>
-                {hovering && (<MainHeader
-                    // @ts-ignore
-                    boton={handleSetChat}
-                    chat={chat}
-                >
-                </MainHeader>)}
+                {hovering && (<MainHeader boton={handleSetChat} chat={chat} />)}
             </Container>
 
-            {chat && <Container className= "containerGen" style={{marginTop: '30px', left: 0, top:50, position:"absolute", display:"flow", height:"10vw"}}>
-
-                <Row style={{
-                    width:"99vw",
-
-                    padding: "1.5rem 2.5rem",
-                    display: "flex",
-                    left: 0,
-                }}>
-                    <Col style={{float: 'left', marginRight: '20px', height:"100px",}}>
-                        <Stack gap={2}>
-                            {!showAdditionalContent &&
-                                <div style={{marginTop: "125px", marginBottom: "100px"}}><span><h2>Context Retrieval from Database</h2></span>
-                                </div>}
-                            {showAdditionalContent &&
-                                <div style={{marginBottom: "20px"}}><span><h2>Prompt Structure</h2></span></div>}
-                            {showAdditionalContent && (<TextBox
-                                type={SectionType.Box1}
-                                value={text1}
-                                onChange={changeText1}
-                                showAdditionalContent={showAdditionalContent}
-
-                            >
-                                <DropdownMenu
-                                    onElementClick={changeText1}
-                                    type={"type1"}
-                                ></DropdownMenu>
-
-                            </TextBox>
-                            )}
-                            {showAdditionalContent && (<EditableTextBox
-                                editedText={editedText}
-                                setShowModal={setShowModal}
-                                onChange={setEditedText}
-                                showModal={showModal}
-                                text={text2}
-                                setText={changeText2}
-                            ></EditableTextBox>)
-                            }
-
-                            <TextBox
-                                type={SectionType.Box3}
-                                value={text3}
-                                onChange={changeText3}
-                                showAdditionalContent={!showAdditionalContent}
-                            >
-                                {showAdditionalContent && (<DropdownMenu
-                                    onElementClick={changeText3}
-                                    type={"type2"}
-                                ></DropdownMenu>)}
-                            </TextBox>
-
-                            {showAdditionalContent && (
-                                <Button
-                                    style={{marginTop: "10px", height: "50px"}}
-                                    onClick={handleTextChange}
-                                    disabled={loading}
-                                >
-                                    {loading ? (
-                                        <div className="loader-container">
-                                            <div className="loader"></div>
-                                        </div>
-                                    ) : (
-                                        "Send"
-                                    )}
-
-                                </Button>)}
-
-
-                        </Stack>
-                    </Col>
-
-                    {showAdditionalContent && (<Col style={{float: 'left'}}>
-                        <ResultBox result={result} text1={text1} text2={text2} text3={text3}/>
-                        <div style={{position: 'absolute', left: 1770, top: 690, display: 'flex'}}>
-                            <Button
-                                variant='link'
-                                onClick={handleClipboard}>
-                                <ClipboardIcon/>
-                            </Button>
-                        </div>
-                    </Col>)}
-
-                    {!showAdditionalContent && (
-                        <Button
-                            style={{marginTop: "400px", height: "50px"}}
-                            disabled={loading}
-                            onClick={handleGetContext}>
-                            {loading ? (
-                                <div className="loader-container">
-                                    <div className="loader"></div>
-                                </div>
-                            ) : (
-                                "Send"
-                            )}
-                        </Button>
-                    )}
-                </Row>
-            </Container>}
+            {chat && <Generator></Generator>}
 
             {!chat && (<Container className="containerChat" style={{marginTop:'0px', width: '100vw', height: '100vh', overflow: 'hidden'}}>
 
-                            <ChatBox
-                                onClick={handleSendMessage}
-                                currentChatID={currentChatId}
-                                setnewMessage={setNewMessage}
-                                loading={loading}
-                                chats={chats}
-                                setCurrentChatID={setCurrentChatId}
-                                onNewChat={handleNewChat}
-                                updateChatMessages={updateChatMessages}
-                                updateChatAIMessages={updateChatAIMessages}
-                            >
-                            </ChatBox>
-
+                    <Outlet/>
                     <Col
                         style={{
                             position: "absolute",
-                            right: "20px",
+                            right: "10px",
                             top: "10vh",
                             width: "18vw",
                             display: "flex",
@@ -298,21 +105,18 @@ function HomePage () {
                                 overflowY: "auto", // También manejamos contenido desbordado
                             }}
                         >
-                            {/* Agrega aquí cualquier otro componente o contenido */}
                             <UrlInput />
                         </div>
                     </Col>
 
                     <Col style={{
                         position: "absolute",
-                        left: "20px",
-                        top: "10vh",
+                        left: "0px",
+                        top: "0vh",
                         width: "18vw",
                         display: "flex",
                         flexDirection: "column",
-                        height: "100%",
-                        overflowY: "auto",
-                        zIndex: "0",
+                        height: "100vh",
                     }}>
                         <ChatList
                             chats={chats}

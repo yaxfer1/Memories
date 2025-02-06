@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import { Chat } from "../types"; // Ajusta la ruta según tu estructura
 import loginService from "../services/login.js";
 import addChatService from "../services/addChat.ts";
@@ -8,7 +8,6 @@ export default function useUser() {
     // Usa el useStore para acceder al estado y las acciones
     const {
         jwt,
-        chats,
         addChat,
         setChats,
         currentChatId,
@@ -38,11 +37,8 @@ export default function useUser() {
     );
 
     // Logout
-    const logout = useCallback(() => {
-        window.sessionStorage.removeItem("jwt");
-        setJWT(null); // Usa setJWT del useStore
-    }, [setJWT]);
 
+    //const logoutmemo = useMemo(() => ({ logout }), [logout])
     // Load chats from the server
     const loadChats = useCallback(async () => {
         console.log("JWT:", jwt);
@@ -93,12 +89,12 @@ export default function useUser() {
         } catch (error) {
             console.error("Error loading chats:", error);
         }
-    }, [jwt, setChats, setCurrentChatId]);
+    }, []);
 
     // Cargar chats cuando el JWT cambie
     useEffect(() => {
         loadChats();
-    }, [jwt, loadChats]);
+    }, []);
 
     // Add a chat
     const addChatUser = useCallback(
@@ -169,7 +165,7 @@ export default function useUser() {
     return {
         jwt,
         login,
-        logout,
+        //logoutmemo,
         isLogged: Boolean(jwt),
         isLoginLoading: state.loading,
         hasLoginError: state.error,

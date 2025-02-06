@@ -1,22 +1,26 @@
 
 import "./styles.css";
-import logoupv from "../assets/react.svg"
+//import logoupv from "../assets/react.svg"
 import {useRoute, Link} from 'wouter'
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
-import useUser from "../hooks/useUser.ts"
+import {useStore} from "../hooks/useStore.tsx"
+import {useCallback} from "react";
 interface MainHeaderProps{
     boton: void
     chat: boolean
 }
 export const MainHeader = ({boton, chat}: MainHeaderProps) => {
-
-
-    const {isLogged, logout} = useUser()
+    const{setJWT, jwt}=useStore()
+    const isLogged = Boolean(jwt)
     const [match] = useRoute("/");
-
+    const logout = useCallback(() => {
+        window.sessionStorage.removeItem("jwt");
+        setJWT(null); // Usa setJWT del useStore
+    }, [setJWT]);
     const handleClick = () => {
         //e.preventDefault()
+        //logout()
         logout()
     }
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -51,7 +55,7 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
 
 
     return (
-        <header id="mainheader" style={{height:"5vw", width:"100vw"}}>
+        <header id="mainheader" style={{height:"4vh", width:"100vw"}}>
             <div>
             </div>
             <nav className="flex w-full justify-center">
@@ -71,7 +75,7 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
                             color: chat === true ? "black" : "gray",
                             pointerEvents: chat === true ? "auto" : "none",
                             borderBottom: chat === false ? "3px solid #0d6efd" : "none",
-                            paddingBottom: "2px", // Espaciado opcional
+                            paddingBottom: "1px", // Espaciado opcional
                             transition: 'opacity 0.5s ease-in-out',
                         }}
                     >Chat</a></li>
@@ -84,7 +88,7 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
                             color: chat === false ? "black" : "gray",
                             pointerEvents: chat === false ? "auto" : "none",
                             borderBottom: chat === true ? "3px solid #0d6efd" : "none",
-                            paddingBottom: "2px", // Espaciado opcional
+                            paddingBottom: "1px", // Espaciado opcional
                             transition: 'opacity 0.5s ease-in-out',
                         }}
                     >Generator</a></li>

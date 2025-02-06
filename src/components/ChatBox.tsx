@@ -4,71 +4,62 @@ import {
     InputGroup,
     FormControl,
     Button,
-    Dropdown,
-    DropdownButton,
 } from "react-bootstrap";
 import "./styles.css";
-import {Chat} from "../types";
+import {useStore} from "../hooks/useStore.tsx"
+import {postChat} from "../services/postChat.js"
+export const ChatBox = () => {
+    //const {chatId} = useParams<{ chatId: string }>();
+    const{
+        newMessage,
+        messages,
+        setNewMessage,
+        //updateChatMessages,
+        //updateChatAIMessages,
+        aimessages,
+        setMessages,
+        setAIMessage,
+        setLoad,
+        loading,
+        chats,
+        jwt,
+    }=useStore()
 
+    const handleSendMessage = async () => {
+        console.log("boton")
+        if (newMessage.trim() !== "") {
+            console.log("boton")
+            setLoad(true)
+            const mensaje = newMessage
+            //const messages = chats.flatMap((chat) => chat.messages)
+            //const aimessages = chats.flatMap((chat) => chat.aimessages)
+            setNewMessage("")
+            // Agregar el nuevo mensaje al estado de mensajes
 
-interface ChatBoxProps {
-    messages: string[];
-    aimessages: string[];
-    newMessage: string;
-    onClick: () => void;
-    setnewMessage: (value: string) => void;
-    loading: boolean;
-    chats: Chat[];
-    setCurrentChatID: (value: bigint) => void;
-    currentChatID: bigint;
-    onNewChat: (value: Chat) => void;
-}
+            setMessages([...messages, mensaje])
+            // -Mandar peticion de chatAIMandar el record a la db
+            // setAIMessages -> Mandar el record a la db
 
-export const ChatBox = ({
-                            newMessage,
-                            onClick,
-                            setnewMessage,
-                            loading,
-                            chats,
-                            setCurrentChatID,
-                            onNewChat,
-                            currentChatID,
-                        }: ChatBoxProps) => {
+            const chatr = await postChat(jwt, currentChatId,mensaje);
+            setAIMessage([...aimessages, chatr])
+            //updateChatAIMessages(currentChatId,[...aimessages, "chatr"])
+            // Limpiar el campo de texto después de enviar el mensaje
+
+            setLoad(false)
+
+        }
+    };
+
+    const{
+        currentChatId
+    }=useStore();
     const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setnewMessage(event.target.value);
+        setNewMessage(event.target.value);
     };
 
-    const handleSelectChat = (chatId: bigint) => {
-        console.log(chatId)
-        setCurrentChatID(chatId);
-    };
-
-    const mappedMessages = chats
-        .filter(chat => chat.id === currentChatID) // Filtrar solo el chat seleccionado
-        .flatMap(chat =>
-            chat.messages.map((text, index) => ({
-                text,
-                sender: "user",
-                chatId: chat.id,
-                index,
-            }))
-        );
-
-    const mappedAImessages = chats
-        .filter(chat => chat.id === currentChatID) // Filtrar solo el chat seleccionado
-        .flatMap(chat =>
-            chat.aimessages.map((text, index) => ({
-                text,
-                sender: "AI",
-                chatId: chat.id,
-                index,
-            }))
-        );
-
-    const combinedMessages = [
-        ...mappedMessages,
-        ...mappedAImessages,
-    ].sort((a, b) => a.index - b.index);
+    const combinedMessages = messages.map((message, index) => ({ text: message, sender: "user", index }))
+        .concat(aimessages.map((message, index) => ({ text: message, sender: "AI", index })))
+        .sort((a, b) => a.index - b.index);
 
     return (
         <Container fluid>
@@ -101,7 +92,7 @@ export const ChatBox = ({
                 />
                 <Button
                     variant="primary"
-                    onClick={onClick}
+                    onClick={handleSendMessage}
                     disabled={loading}
                     className="send-button"
                 >

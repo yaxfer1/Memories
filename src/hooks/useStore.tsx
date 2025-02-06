@@ -38,6 +38,8 @@ function reducer(state: State, action: Action): State {
             return { ...state, chat: action.payload };
         case 'SET_AIMESSAGES':
             return { ...state, aimessages: action.payload };
+        case 'SET_MESSAGES':
+            return { ...state, messages: action.payload };
         case 'SET_EDITEDTEXT':
             return { ...state, editedText: action.payload };
         case 'SET_SHOWMODAL':
