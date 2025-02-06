@@ -1,6 +1,6 @@
 const ENDPOINT = 'http://127.0.0.1:5000/api';
 
-export default function login ({ username, password }) {
+export default function login ( {username, password} ) {
     return fetch(`${ENDPOINT}/login`, {
         method: 'POST',
         headers: {

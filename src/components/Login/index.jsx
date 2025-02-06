@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import {useLocation} from "wouter"
-import useUser from '../../hooks/useUser.jsx'
+import {useNavigate} from "react-router-dom"
+import useUser from '../../hooks/useUser.ts'
 import { useEffect } from "react";
 import './index.css'
 
 export default function Login({onLogin}) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [, navigate] = useLocation()
+    const navigate = useNavigate()
     const {isLoginLoading, hasLoginError, login, isLogged} = useUser()
 
     useEffect(() => {

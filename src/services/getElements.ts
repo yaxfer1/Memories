@@ -1,6 +1,6 @@
 const ENDPOINT = 'http://127.0.0.1:5000/api';
 
-export default function getElements({ jwt }) {
+export default function getElements( jwt: string ) {
     return fetch(`${ENDPOINT}/get_elements`, {
         method: 'POST',
         headers: {
