@@ -59,17 +59,8 @@ function HomePage () {
     return (
 
         <Container style={{margin: '0' , padding:'0', width:'100vw', height:'100vh', overflow:'hidden'}}>
-            <Container onMouseOver={handleMouseHover} onMouseOut={handleMouseLeave}  style={{
-                position: "absolute",
-                height: "5vw",
-                top: "0px",
-                left: "15vw",
-                maxWidth:"none",
-                width: "100vw", // Fondo para identificar la zona
-                zIndex: "10000",
-            }}>
-                {hovering && (<MainHeader boton={handleSetChat} chat={chat} />)}
-            </Container>
+
+            <MainHeader boton={handleSetChat} chat={chat} />
 
             {chat && <Generator></Generator>}
 

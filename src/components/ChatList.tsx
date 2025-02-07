@@ -1,5 +1,5 @@
 //import React from "react";
-import {useEffect} from "react";
+import {useEffect, useState, useRef} from "react";
 import {
     Button,
 } from "react-bootstrap";
@@ -12,7 +12,7 @@ import getChatMessages from "../services/getChatMessages.js";
 
 interface ChatListProps {
     setCurrentChatID: (value: bigint) => void;
-    onNewChat: () => void;
+    onNewChat: (name?: string) => void;
     chats: Chat[];
 }
 
@@ -20,10 +20,42 @@ export const ChatList = ({
     setCurrentChatID,
     onNewChat,
     chats,
-
 }: ChatListProps) => {
-    const{ setMessages, setAIMessage, messages, aimessages}=useStore()
-    //const { chats } = useStore();
+    const [isEditing, setIsEditing] = useState(false);
+    const [chatName, setChatName] = useState("");
+    const inputRef = useRef<HTMLInputElement>(null);
+    const { setMessages, setAIMessage, messages, aimessages } = useStore();
+
+    const handleClickOutside = (e: MouseEvent) => {
+        if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
+            handleSubmit();
+        }
+    };
+
+    useEffect(() => {
+        if (isEditing) {
+            document.addEventListener("mousedown", handleClickOutside);
+            inputRef.current?.focus();
+        }
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isEditing]);
+
+    const handleSubmit = () => {
+        if (chatName.trim()) {
+            onNewChat(chatName);
+        }
+        setIsEditing(false);
+        setChatName("");
+    };
+
+    const handleKeyPress = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            handleSubmit();
+        }
+    };
+
     useEffect(() => {
         console.log("Chats in the component:", chats);
     }, [chats]);
@@ -60,31 +92,51 @@ export const ChatList = ({
         //getMessages y AIMessages
         //setNewAIMessage
     };
-return (
-    <div className={"col-list"}>
-    <Button onClick={onNewChat} className="new-chat-button">
-        New Chat
-    </Button>
-    <div className="chat-list">
-
-        {chats
-            .slice()
-            .reverse() // Alternativa más eficiente a slice().reverse() en ES2023
-            .map((chat) => (
-                <div key={chat.id.toString()} className="chat-item">
-                    <Link
-                        to={`/home/${chat.id.toString()}`}
-                        onClick={() => handleSelectChat(chat.id)}
-                        className="chat-link"
-                    >
-                        <div className="chat-content">
-                            {chat.name}
+    return (
+        <div className={"col-list"}>
+            {isEditing ? (
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={chatName}
+                    onChange={(e) => setChatName(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    style={{
+                        width: '100%',
+                        padding: '8px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        outline: 'none',
+                    }}
+                    placeholder="Enter chat name..."
+                />
+            ) : (
+                <Button 
+                    onClick={() => setIsEditing(true)} 
+                    className="new-chat-button"
+                >
+                    New Chat
+                </Button>
+            )}
+            <div className="chat-list">
+                {chats
+                    .slice()
+                    .reverse() // Alternativa más eficiente a slice().reverse() en ES2023
+                    .map((chat) => (
+                        <div key={chat.id.toString()} className="chat-item">
+                            <Link
+                                to={`/home/${chat.id.toString()}`}
+                                onClick={() => handleSelectChat(chat.id)}
+                                className="chat-link"
+                            >
+                                <div className="chat-content">
+                                    {chat.name}
+                                </div>
+                            </Link>
                         </div>
-                    </Link>
-                </div>
-            ))}
-    </div>
-    </div>
-);
+                    ))}
+            </div>
+        </div>
+    );
 };
 export default ChatList;

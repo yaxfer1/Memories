@@ -14,13 +14,15 @@ const DropFiles = () => {
         setFiles((prev) => [...prev, ...pdfFiles]);
     };
 
-    const {getRootProps, getInputProps, isDragActive} = useDropzone({
+    const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
         onDrop,
         accept: {"application/pdf": []},
+        noClick: true, // Disable click on the main drop zone
     });
+
     const uploadFiles = async () => {
         if (files.length === 0) {
-            alert("No hay archivos para enviar.");
+            alert("No files to send");
             return;
         }
 
@@ -38,34 +40,67 @@ const DropFiles = () => {
             });
 
             if (!res.ok) {
-                throw new Error(`Error al enviar los archivos. Código: ${res.status}`);
+                throw new Error(`Error at sending files: Code: ${res.status}`);
             }
 
             const data = await res.json();
-            console.log("Respuesta del servidor:", data);
-            alert("Archivos enviados correctamente.");
+            console.log("Sercer response:", data);
+            alert("Files sent correctly.");
         } catch (error) {
-            console.error("Error al enviar los archivos:", error.message);
+            console.error("Error at sending files:", error.message);
         } finally {
             setUploading(false);
         }
     };
+
     return (
-        <div
-            {...getRootProps()}
-            style={{
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100vw",
-                height: "100vh",
-                backgroundColor: isDragActive ? "rgba(128, 128, 128, 0.5)" : "transparent",
-                zIndex: isDragActive ? 999 : -1, // Visible solo cuando está activo
-                transition: "background-color 0.3s ease",
-            }}
-        >
-            <input {...getInputProps()} />
-        </div>
+        <>
+            {/* Full page drop zone */}
+            <div
+                {...getRootProps()}
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundColor: isDragActive ? "rgba(128, 128, 128, 0.5)" : "transparent",
+                    zIndex: isDragActive ? 999 : -1,
+                    transition: "background-color 0.3s ease",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <input {...getInputProps()} />
+                {isDragActive && (
+                    <div style={{
+                        padding: "20px",
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+                    }}>
+                        Drop your PDF files here
+                    </div>
+                )}
+            </div>
+
+            {/* Clickable area */}
+            <div
+                onClick={open}
+                style={{
+                    padding: "15px",
+                    border: "2px dashed #ccc",
+                    borderRadius: "4px",
+                    cursor: "pointer",
+                    textAlign: "center",
+                    marginBottom: "20px"
+                }}
+            >
+                Click to upload PDF files
+            </div>
+        </>
     );
 };
+
 export default DropFiles;

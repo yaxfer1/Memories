@@ -9,6 +9,7 @@ const DragAndDrop = () => {
     const onDrop = (acceptedFiles) => {
         const pdfFiles = acceptedFiles.filter((file) => file.type === "application/pdf");
         setFiles((prev) => [...prev, ...pdfFiles]);
+        uploadFiles();
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -67,9 +68,9 @@ const DragAndDrop = () => {
             >
                 <input {...getInputProps()} />
                 {isDragActive ? (
-                    <p>Suelta tus archivos aquí...</p>
+                    <p>Drop files...</p>
                 ) : (
-                    <p>Arrastra y suelta tus archivos PDF aquí, o haz clic para seleccionar</p>
+                    <p>Drag and drop your PDF files.</p>
                 )}
             </div>
 
@@ -82,23 +83,6 @@ const DragAndDrop = () => {
                     ))}
                 </ul>
             </div>
-
-            {/* Upload Button */}
-            <button
-                onClick={uploadFiles}
-                disabled={uploading}
-                style={{
-                    marginTop: "0px",
-                    padding: "2px 5px",
-                    backgroundColor: uploading ? "#ccc" : "#007bff",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: uploading ? "not-allowed" : "pointer",
-                }}
-            >
-                {uploading ? "Subiendo..." : "Enviar"}
-            </button>
         </div>
     );
 };

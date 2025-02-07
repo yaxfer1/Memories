@@ -14,36 +14,23 @@ export const ChatBox = () => {
         newMessage,
         messages,
         setNewMessage,
-        //updateChatMessages,
-        //updateChatAIMessages,
         aimessages,
         setMessages,
         setAIMessage,
         setLoad,
         loading,
-        chats,
         jwt,
     }=useStore()
 
     const handleSendMessage = async () => {
-        console.log("boton")
         if (newMessage.trim() !== "") {
-            console.log("boton")
+
             setLoad(true)
             const mensaje = newMessage
-            //const messages = chats.flatMap((chat) => chat.messages)
-            //const aimessages = chats.flatMap((chat) => chat.aimessages)
             setNewMessage("")
-            // Agregar el nuevo mensaje al estado de mensajes
-
             setMessages([...messages, mensaje])
-            // -Mandar peticion de chatAIMandar el record a la db
-            // setAIMessages -> Mandar el record a la db
-
             const chatr = await postChat(jwt, currentChatId,mensaje);
             setAIMessage([...aimessages, chatr])
-            //updateChatAIMessages(currentChatId,[...aimessages, "chatr"])
-            // Limpiar el campo de texto después de enviar el mensaje
 
             setLoad(false)
 
@@ -63,9 +50,6 @@ export const ChatBox = () => {
 
     return (
         <Container fluid>
-            {/* Lista de chats */}
-
-            {/* Lista de mensajes */}
             <div className="messages-container">
                 {combinedMessages.map((message, index) => (
                     <div
@@ -82,7 +66,6 @@ export const ChatBox = () => {
                 ))}
             </div>
 
-            {/* Input para nuevos mensajes */}
             <InputGroup className="message-input-group">
                 <FormControl
                     placeholder="Write your message here..."
