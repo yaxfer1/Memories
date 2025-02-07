@@ -1,38 +1,14 @@
-# React + TypeScript + Vite
+This is a continuation of a project that I started in 2023, for my final bachelor's degree project. This project consisted in a full-stack application using React, Python, SQL and Pinecone, to make news automatically.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Now, I'm continuing with the project to add new features and improve the application, but with redesigning the goal to make a human-in-the-loop application where users will be able to make a technical report of any given thematic. 
 
-Currently, two official plugins are available:
+The user, or the organization, will feed the system with the information of different businesses, or projects; and the back-end of the system will consist in a Langchain/LangGraph that will choose the different agents needed to retrieve the information.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
-
-
-(<TextBox
-type={SectionType.Box2}
-value={text2}
-onChange={changeText2}
-showAdditionalContent={showAdditionalContent}
-/>)
+This application aims then to
+- Make a technical report of any given thematic.
+- Make it through a human-in-the-loop iteration where the user chooses the length, different items of information on each question/paragraph of the report.
+- Let users upload information in different ways: PDF, URL, etc.
+- Chat with the database and agentic system.
+- Manage different users and permissions allowing to have all the different generations stored and available for the user.
+- Teach me how to use all the tools and technologies that I'm using.
+- Make funny and fast a boring process.
