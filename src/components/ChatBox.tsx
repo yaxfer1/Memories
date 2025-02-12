@@ -7,6 +7,7 @@ import {
 } from "react-bootstrap";
 import "./styles.css";
 import {useStore} from "../hooks/useStore.tsx"
+//@ts-expect-error
 import {postChat} from "../services/postChat.js"
 export const ChatBox = () => {
     //const {chatId} = useParams<{ chatId: string }>();

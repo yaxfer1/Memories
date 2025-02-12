@@ -12,7 +12,9 @@ import MainHeader from "../components/MainHeader.tsx";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import DropdownMenu from '../components/DropdownMenu.jsx';
+// @ts-expect-error
 import DragAndDrop from '../components/DragAndDrop.jsx';
+// @ts-expect-error
 import UrlInput from '../components/UrlInput.jsx';
 import ChatList from '../components/ChatList.tsx';
 import Generator from '../components/Generator.tsx';
