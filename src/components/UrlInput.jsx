@@ -67,7 +67,7 @@ const TextUploader = () => {
                     type="submit"
                     style={{
                         width: '40px',
-                        backgroundColor: "#007BFF",
+                        backgroundColor: "#0d0d0d",
                         color: "white",
                         border: "none",
                         borderRadius: "4px",
@@ -75,6 +75,7 @@ const TextUploader = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
+                        hover: "opacity: 0.5",
                     }}
                     disabled={uploading}
                 >

@@ -30,36 +30,14 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
         return isLogged ? (
             <button
                 onClick={handleClick}
-                style={{
-                    width: '30px',
-                    height: '30px',
-                    backgroundColor: '#f0f0f0',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 0,
-                    color: '#0d6efd',
-                }}
+                className="header-button"
             >
                 ←
             </button>
         ) : (
             <Link to='/'>
                 <button
-                    style={{
-                        width: '30px',
-                        height: '30px',
-                        backgroundColor: '#f0f0f0',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 0,
-                        color: '#0d6efd',
-                    }}
+                    className="header-button"
                 >
                     →
                 </button>
@@ -80,18 +58,7 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
         }}>
             <button
                 onClick={boton}
-                style={{
-                    width: '30px',
-                    height: '30px',
-                    backgroundColor: '#f0f0f0',
-                    borderRadius: '50%',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 0,
-                    color: '#0d6efd',
-                }}
+                className="header-button"
             >
                 {chat ? '💬' : '📄'}
             </button>

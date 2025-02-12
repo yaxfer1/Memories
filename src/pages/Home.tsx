@@ -2,11 +2,11 @@
 import './Home.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Container, Col} from 'react-bootstrap'
-import "../assets/react.svg"
+
 import {Outlet} from "react-router-dom";
 import {useStore} from "../hooks/useStore.tsx";
 import useUser from "../hooks/useUser.ts";
-import {useState, useCallback, useMemo} from "react";
+import {useState, useCallback} from "react";
 import MainHeader from "../components/MainHeader.tsx";
 //import {postChat} from "../services/postChat.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -28,7 +28,6 @@ function HomePage () {
         setCurrentChatId,
     }=useStore()
     const [hovering, setHovering] = useState(true);
-    const { addChatUser } = useUser();
 
 
 
@@ -46,15 +45,6 @@ function HomePage () {
         setHovering(prev => prev && false);
     }, []);
 
-    const handleNewChat = async () => {
-        //const newChatId = BigInt(Math.floor(Date.now() / 1000)); // Convierte el tiempo actual en segundos a BigInt
-        const chat_name =  "CHATPRUEBA";
-        console.log(chat_name)
-        const chatsadded =await addChatUser(chat_name);
-        console.log(chatsadded)
-        //addChat({ id: newChatId, name: `Chat ${chats.length + 1}`, messages: [], aimessages: [] });
-        //setCurrentChatId(newChatId);
-    };
 
     return (
 
@@ -112,7 +102,6 @@ function HomePage () {
                         <ChatList
                             chats={chats}
                             setCurrentChatID={setCurrentChatId}
-                            onNewChat={handleNewChat}
                         ></ChatList>
                     </Col>
             </Container>

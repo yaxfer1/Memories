@@ -8,23 +8,42 @@ import {Chat} from "../types";
 import {Link} from "react-router-dom"
 //import ChatBox from "./ChatBox.tsx";
 import {useStore} from "../hooks/useStore.tsx"
+//@ts-expect-error
 import getChatMessages from "../services/getChatMessages.js";
+import addChatService from "../services/addChat.ts";
+import useUser from "../hooks/useUser.ts";
+import deleteButton from "../assets/deleteButton.svg";
+import deleteChatService from "../services/deleteChat.ts";
 
 interface ChatListProps {
     setCurrentChatID: (value: bigint) => void;
-    onNewChat: (name?: string) => void;
     chats: Chat[];
 }
 
 export const ChatList = ({
     setCurrentChatID,
-    onNewChat,
     chats,
 }: ChatListProps) => {
     const [isEditing, setIsEditing] = useState(false);
     const [chatName, setChatName] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
-    const { setMessages, setAIMessage, messages, aimessages } = useStore();
+    const { setMessages, setAIMessage, addChat, jwt, deleteChat } = useStore();
+    const { addChatUser } = useUser();
+
+    const handleNewChat = async () => {
+        try {
+            const chatsadded = await addChatService(jwt, chatName);
+            console.log("Chat añadido:", chatsadded);
+    
+            const chatId = chatsadded[2];
+    
+            addChat({ id: chatId, name: chatName, messages: [], aimessages: [] });
+        } catch (error) {
+            console.error("Error al manejar el nuevo chat:", error);
+        }
+    };
+
+
 
     const handleClickOutside = (e: MouseEvent) => {
         if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
@@ -44,7 +63,7 @@ export const ChatList = ({
 
     const handleSubmit = () => {
         if (chatName.trim()) {
-            onNewChat(chatName);
+            handleNewChat();
         }
         setIsEditing(false);
         setChatName("");
@@ -56,41 +75,47 @@ export const ChatList = ({
         }
     };
 
-    useEffect(() => {
-        console.log("Chats in the component:", chats);
-    }, [chats]);
     const handleSelectChat = async (chatId: bigint) => {
         console.log(chatId);
         setMessages([]);
-        console.log(messages)
-        setAIMessage([]); //no va a hacer falta pq lo vamos a reventar
-        console.log(aimessages);
+
+        setAIMessage([]); 
+
         setCurrentChatID(chatId);
         console.log("chatID: " + chatId.toString())
         try {
-            const response = await getChatMessages(chatId.toString());  // Esperar la respuesta
+            const response = await getChatMessages(chatId.toString());  
             console.log("Respuesta:", response);
             const [mensajes, aimessages] = response[0]
+            //@ts-expect-error
                 .reduce(([mensajesAcc, aimessagesAcc], message: string, index: bigint) => {
                     if (response[1][index] === 42) {
-                        aimessagesAcc.push(message); // Si el user_id es 42, lo agregamos a aimessages
+                        aimessagesAcc.push(message); 
                     } else {
-                        mensajesAcc.push(message); // Si no, lo agregamos a mensajes
+                        mensajesAcc.push(message); 
                     }
-                    return [mensajesAcc, aimessagesAcc]; // Retornamos el acumulador
-                }, [[], []]); // Inicializamos dos arrays vacíos
+                    return [mensajesAcc, aimessagesAcc]; 
+                }, [[], []]); 
 
-            console.log(mensajes)
             setMessages(mensajes)
-            console.log(aimessages)
             setAIMessage(aimessages)
         } catch (error) {
             console.error("Error obteniendo los mensajes del chat:", error);
         }
 
-        
-        //getMessages y AIMessages
-        //setNewAIMessage
+    };
+
+    const handleDeleteChat = async (chatId: bigint) => {
+        console.log(chatId);
+        deleteChat(chatId);
+        console.log(chats)
+        try {
+            const response = await deleteChatService(chatId);  
+            console.log(response)
+        } catch (error) {
+            console.error("Error obteniendo los mensajes del chat:", error);
+        }
+
     };
     return (
         <div className={"col-list"}>
@@ -100,7 +125,7 @@ export const ChatList = ({
                     type="text"
                     value={chatName}
                     onChange={(e) => setChatName(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress}
                     style={{
                         width: '100%',
                         padding: '8px',
@@ -114,14 +139,16 @@ export const ChatList = ({
                 <Button 
                     onClick={() => setIsEditing(true)} 
                     className="new-chat-button"
+                    bsPrefix="custom-button"
                 >
                     New Chat
+
                 </Button>
             )}
             <div className="chat-list">
                 {chats
                     .slice()
-                    .reverse() // Alternativa más eficiente a slice().reverse() en ES2023
+                    .reverse()
                     .map((chat) => (
                         <div key={chat.id.toString()} className="chat-item">
                             <Link
@@ -130,7 +157,32 @@ export const ChatList = ({
                                 className="chat-link"
                             >
                                 <div className="chat-content">
-                                    {chat.name}
+                                    <span>{chat.name}</span>
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            handleDeleteChat(chat.id);
+                                        }}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            padding: 0,
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <img 
+                                            src={deleteButton} 
+                                            alt="Delete"
+                                            style={{
+                                                width: '20px',
+                                                height: '20px'
+                                            }}
+                                            className="svg-button"
+                                        />
+                                    </button>
                                 </div>
                             </Link>
                         </div>

@@ -20,7 +20,7 @@ export interface State {
     email: string;
     password: string;
     currentChatId: bigint;
-    chats: Chat[]; // Nueva propiedad para almacenar todos los chats
+    chats: Chat[];
     jwt: string;
 }
 
@@ -42,9 +42,9 @@ export type Action =
     | { type: 'ADD_CHAT'; payload: Chat}
     | { type: 'SET_CHATS'; payload: Chat[]}
     | { type: 'SET_JWT'; payload: string}
-    | { type: 'DELETE_CHAT'; payload: string } // Nueva acción para eliminar un chat por ID
-    | { type: 'UPDATE_CHAT_MESSAGES'; payload: { currentChatID: bigint; messages: string[] } } // Actualiza los mensajes de un chat específico
-    | { type: 'UPDATE_CHAT_AIMESSAGES'; payload: { currentChatID: bigint; aimessages: string[] } }; // Actualiza los mensajes de IA de un chat específico
+    | { type: 'DELETE_CHAT'; payload: bigint } 
+    | { type: 'UPDATE_CHAT_MESSAGES'; payload: { currentChatID: bigint; messages: string[] } }
+    | { type: 'UPDATE_CHAT_AIMESSAGES'; payload: { currentChatID: bigint; aimessages: string[] } }; 
 
 export enum SectionType {
     Box1 = 'box1',

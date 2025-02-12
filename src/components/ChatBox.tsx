@@ -27,11 +27,11 @@ export const ChatBox = () => {
 
             setLoad(true)
             const mensaje = newMessage
-            setNewMessage("")
             setMessages([...messages, mensaje])
             const chatr = await postChat(jwt, currentChatId,mensaje);
             setAIMessage([...aimessages, chatr])
 
+            setNewMessage("")
             setLoad(false)
 
         }
@@ -58,9 +58,7 @@ export const ChatBox = () => {
                             message.sender === "user" ? "user-message" : "ai-message"
                         }`}
                     >
-            <span className="message-sender">
-              {message.sender === "user" ? "User:" : "AI:"}
-            </span>
+
                         <span className="message-text">{message.text}</span>
                     </div>
                 ))}
@@ -69,8 +67,10 @@ export const ChatBox = () => {
             <InputGroup className="message-input-group">
                 <FormControl
                     placeholder="Write your message here..."
+                    className="custom-input-message"
                     value={newMessage}
                     onChange={handleTextChange}
+                    bsPrefix="custom-input"
                     disabled={loading}
                 />
                 <Button
@@ -78,6 +78,7 @@ export const ChatBox = () => {
                     onClick={handleSendMessage}
                     disabled={loading}
                     className="send-button"
+                    bsPrefix="custom-button"
                 >
                     {loading ? <div className="loader" /> : "Send"}
                 </Button>
