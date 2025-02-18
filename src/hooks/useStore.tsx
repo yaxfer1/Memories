@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
-import { Chat, State, Action } from '../types'; // Asegúrate de importar tus tipos
+import { Chat, State, Action, Company, Memory } from '../types';
 
 // Estado inicial
 const initialState: State = {
@@ -17,8 +17,13 @@ const initialState: State = {
     email: '',
     password: '',
     currentChatId: 1n,
-    chats: [], // Lista de chats
-    jwt: "", // JWT para autenticación
+    chats: [], 
+    jwt: "", 
+    companies: [],
+    newCompanyName: '',
+    newMemoryName: '',
+    selectedCompanyId: 1n,
+    selectedMemoryId: 1n,
 };
 
 // Reducer
@@ -78,6 +83,18 @@ function reducer(state: State, action: Action): State {
             };
         case 'SET_JWT':
             return { ...state, jwt: action.payload };
+        case 'SET_NEWCOMPANYNAME':
+            return { ...state, newCompanyName: action.payload };
+        case 'SET_NEWMEMORYNAME':
+            return { ...state, newMemoryName: action.payload };
+        case 'SET_SELECTEDCOMPANY':
+            return { ...state, selectedCompanyId: action.payload };
+        case 'SET_SELECTEDMEMORY':
+            return { ...state, selectedMemoryId: action.payload };
+        case 'SET_COMPANIES':
+            return { ...state, companies: action.payload };
+        case 'SET_MEMORIES':
+            return { ...state, companies: state.companies.map((company)=> company.id === action.payload.selectedCompany ? {...company, memories: action.payload.memories} : company)};
         default:
             return state;
     }
@@ -103,7 +120,6 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     );
 }
 
-// Hook para consumir el contexto
 export function useStore() {
     const context = useContext(StoreContext);
     if (!context) {
@@ -133,7 +149,14 @@ export function useStore() {
         dispatch({ type: 'UPDATE_CHAT_MESSAGES', payload: { currentChatID, messages } });
     const updateChatAIMessages = (currentChatID: bigint, aimessages: string[]) =>
         dispatch({ type: 'UPDATE_CHAT_AIMESSAGES', payload: { currentChatID, aimessages } });
-    const setJWT = (payload: string | null) => dispatch({ type: 'SET_JWT', payload });
+    const setJWT = (payload: string) => dispatch({ type: 'SET_JWT', payload });
+    const setCompanies = (payload: Company[]) => dispatch({ type: 'SET_COMPANIES', payload });
+    const setMemories = (selectedCompany: bigint, memories: Memory[]) => dispatch({ type: 'SET_MEMORIES', payload: {selectedCompany, memories} });
+    const setNewCompanyName = (payload: string) => dispatch({ type: 'SET_NEWCOMPANYNAME', payload });
+    const setNewMemoryName = (payload: string) => dispatch({ type: 'SET_NEWMEMORYNAME', payload });
+    const setSelectedCompany = (payload: bigint) => dispatch({ type: 'SET_SELECTEDCOMPANY', payload });
+    const setSelectedMemory = (payload: bigint) => dispatch({ type: 'SET_SELECTEDMEMORY', payload });
+
 
     return {
         ...state,
@@ -157,5 +180,11 @@ export function useStore() {
         updateChatMessages,
         updateChatAIMessages,
         setJWT,
+        setCompanies,
+        setMemories,
+        setNewCompanyName,
+        setNewMemoryName,
+        setSelectedCompany,
+        setSelectedMemory,
     };
 }

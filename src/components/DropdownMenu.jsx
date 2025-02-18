@@ -4,7 +4,7 @@ import useUser from "../hooks/useUser.ts";
 import Login from "./Login/index.jsx";
 
 
-function DropdownMenu({ onElementClick, type }) {
+export function DropdownMenu({ onElementClick, type }) {
     const { isLogged, addElement, elements, rmElement } = useUser();
     const [showModal2, setShowModal2] = useState(false);
 

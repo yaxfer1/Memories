@@ -21,7 +21,6 @@
     max-width: 15vw;
     left: 0px;
     padding: 0px;
-    margin-bottom: 50px;
     background-color: #f0f0f0;
 
 }
@@ -97,11 +96,10 @@
     cursor: pointer;
     transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 
-    z-index: 10000000000000000000000000000;
 }
 
 .new-chat-button:hover {
-    border-color: #f0f0f0; /* Color de hover */
+    border-color: #f0f0f0;
 }
 
 body{
@@ -251,3 +249,14 @@ nav ul li {
 .header-button:hover{
     border-color: #0d0d0d;
 }
+
+.header-dropdown{
+    background-color: #f0f0f0;
+    border-color: #f0f0f0;
+    color: black;
+}
+.dropdown-item-custom{
+    display: flex;
+    justify-content: space-between;
+}
+

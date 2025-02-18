@@ -1,9 +1,21 @@
 export interface Chat {
     id: bigint;
-    name: string; // Nombre del chat
-    messages: string[]; // Mensajes del usuario en el chat
-    aimessages: string[]; // Mensajes de la IA en el chat
+    name: string; 
+    messages: string[]; 
+    aimessages: string[]; 
 }
+
+export interface Company {
+    id: bigint;
+    name: string;
+    memories: Memory[];
+}
+
+export interface Memory {
+    id: bigint;
+    name: string;
+}
+
 
 export interface State {
     text1: string;
@@ -22,6 +34,11 @@ export interface State {
     currentChatId: bigint;
     chats: Chat[];
     jwt: string;
+    companies: Company[];
+    newCompanyName: string;
+    newMemoryName: string;
+    selectedCompanyId: bigint;
+    selectedMemoryId: bigint;
 }
 
 export type Action =
@@ -44,7 +61,13 @@ export type Action =
     | { type: 'SET_JWT'; payload: string}
     | { type: 'DELETE_CHAT'; payload: bigint } 
     | { type: 'UPDATE_CHAT_MESSAGES'; payload: { currentChatID: bigint; messages: string[] } }
-    | { type: 'UPDATE_CHAT_AIMESSAGES'; payload: { currentChatID: bigint; aimessages: string[] } }; 
+    | { type: 'UPDATE_CHAT_AIMESSAGES'; payload: { currentChatID: bigint; aimessages: string[] } } 
+    | { type: 'SET_NEWCOMPANYNAME'; payload: string }
+    | { type: 'SET_NEWMEMORYNAME'; payload: string }
+    | { type: 'SET_SELECTEDCOMPANY'; payload: bigint}
+    | { type: 'SET_SELECTEDMEMORY'; payload: bigint}
+    | { type: 'SET_COMPANIES'; payload: Company[] }
+    | { type: 'SET_MEMORIES'; payload: {selectedCompany: bigint, memories: Memory[]} }
 
 export enum SectionType {
     Box1 = 'box1',

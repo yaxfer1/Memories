@@ -12,18 +12,19 @@ interface TextBoxProps {
 }
 
 const commonStyles = {
-    border: 0,
+    border: "2px solid #0d0d0d",
     height: '200px',
     fontSize: '1.2em',
     resize: 'none',
-    backgroundColor: 'rgba(190, 198, 255, 0.21)'
+    backgroundColor: 'white',
+    boxShadow: "none",
 };
 
 const getInitialValue = ({ type, loading }: { type: SectionType; loading?: boolean }) => {
     if (type === SectionType.Box1) return 'Este es el Box1';
     if (type === SectionType.Box2) return 'Este es el Box2';
     if (loading === true) return 'Cargando...';
-    return 'Este es el Box3';
+    return 'Insert report paragraph';
 };
 
 export const TextBox = ({ type, value, loading, onChange, showAdditionalContent, children }: TextBoxProps) => {

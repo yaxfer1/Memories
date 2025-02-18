@@ -53,13 +53,7 @@ function HomePage () {
         <Container style={{margin: '0' , padding:'0', width:'100vw', height:'100vh', overflow:'hidden'}}>
 
             <MainHeader boton={handleSetChat} chat={chat} />
-
-            {chat && <Generator></Generator>}
-
-            {!chat && (<Container className="containerChat" style={{marginTop:'0px', width: '100vw', height: '100vh', overflow: 'hidden'}}>
-
-                    <Outlet/>
-                    <Col
+            <Col
                         style={{
                             position: "absolute",
                             right: "10px",
@@ -74,9 +68,9 @@ function HomePage () {
                     >
                         <div
                             style={{
-                                flex: "1", // Para que ocupe proporcionalmente el espacio disponible
-                                overflowY: "auto", // Para manejar contenido desbordado
-                                borderBottom: "1px solid #ccc", // Línea divisoria opcional
+                                flex: "1", 
+                                overflowY: "auto", 
+                                borderBottom: "1px solid #ccc", 
                             }}
                         >
                             <DragAndDrop />
@@ -84,14 +78,13 @@ function HomePage () {
 
                         <div
                             style={{
-                                flex: "1", // Ocupará el mismo espacio que el anterior
-                                overflowY: "auto", // También manejamos contenido desbordado
+                                flex: "1", 
+                                overflowY: "auto", 
                             }}
                         >
                             <UrlInput />
                         </div>
                     </Col>
-
                     <Col style={{
                         position: "absolute",
                         left: "0px",
@@ -106,6 +99,11 @@ function HomePage () {
                             setCurrentChatID={setCurrentChatId}
                         ></ChatList>
                     </Col>
+            {chat && (<Container className="containerGenerator" style={{marginTop:'0px', width: '60vw', height: '100vh', overflow: 'hidden'}}><Generator></Generator></Container>)}
+
+            {!chat && (<Container className="containerChat" style={{marginTop:'0px', width: '100vw', height: '100vh', overflow: 'hidden'}}>
+
+                    <Outlet/>
             </Container>
             )}
         </Container>

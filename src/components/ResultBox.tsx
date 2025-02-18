@@ -18,15 +18,18 @@ const ResultBox: React.FC<ResultBoxProps> = ({ result, text1, text2, text3 }) =>
             disabled={false}
             placeholder={`Prompt: \n\n${text1}\n\n${text2}\n\n${text3}`}
             style={{
+                position: "relative",
                 height: "700px",
-                width: "1000px",
+                width: "40vw",
                 overflowY: "scroll",
-                border: "0px solid #ccc",
+                border: "2px solid #ccc",
                 marginBottom: "10px",
                 marginTop: "10px",
                 whiteSpace: "pre-wrap",
                 textAlign: "left",
                 resize:"none",
+                outline: "none",
+                boxShadow: "none",
             }}
 
         />)
