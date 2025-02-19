@@ -1,32 +1,36 @@
 import React, { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useStore } from "../hooks/useStore";
 const AI_CHAT_FILES = 'http://127.0.0.1:5000/api/upload_files';
 
 const DragAndDrop = () => {
-    const [files, setFiles] = useState([]);
     const [uploading, setUploading] = useState(false);
+    const {files, setFiles, selectedMemoryId, pdfFilenames, setpdfFilenames} = useStore();
 
-    const onDrop = (acceptedFiles) => {
-        const pdfFiles = acceptedFiles.filter((file) => file.type === "application/pdf");
-        setFiles((prev) => [...prev, ...pdfFiles]);
-        uploadFiles();
+    const onDrop = (acceptedFiles: File[]) => {
+        console.log("acceptedFiles: ", acceptedFiles);
+        const pdfFiles = acceptedFiles.filter((file: File) => file.type === "application/pdf");
+        setFiles([...files, ...pdfFiles]);
+        setpdfFilenames([...pdfFilenames, ...pdfFiles.map((file) => file.name)]);
+        uploadFiles(pdfFiles);
     };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: { "application/pdf": [] },
     });
-    const uploadFiles = async () => {
-        if (files.length === 0) {
+    const uploadFiles = async (pdfFiles: File[]) => {
+        if (pdfFiles.length === 0) {
             alert("No hay archivos para enviar.");
             return;
         }
 
         const formData = new FormData();
-        files.forEach((file) => {
+        pdfFiles.forEach((file) => {
             formData.append("files", file);
         });
-
+        formData.append("memory_id", selectedMemoryId.toString());
+        console.log("formData: ", formData);
         try {
             setUploading(true);
 
@@ -42,7 +46,8 @@ const DragAndDrop = () => {
             const data = await res.json();
             console.log("Respuesta del servidor:", data);
             alert("Archivos enviados correctamente.");
-        } catch (error) {
+        } catch (error: any) {
+            alert("Error al enviar los archivos: " + error.message);
             console.error("Error al enviar los archivos:", error.message);
         } finally {
             setUploading(false);
@@ -78,8 +83,8 @@ const DragAndDrop = () => {
             <div style={{ width: "100%" }}>
 
                 <ul>
-                    {files.map((file, index) => (
-                        <li key={index}>{file.name}</li>
+                    {pdfFilenames.map((pdfFilename, index) => (
+                        <li key={index}>{pdfFilename}</li>
                     ))}
                 </ul>
             </div>

@@ -9,6 +9,9 @@ import addBusinessService from '../services/addBusiness';
 import addMemoryService from '../services/addMemory';
 import getMemoriesFromBusiness from '../services/getMemoriesFromBusiness';
 import deleteButton from "../assets/deleteButton.svg";
+import deleteBusinessService from '../services/deleteBusiness.ts';
+import deleteMemoryService from '../services/deleteMemory.ts';
+import retrieveFromMemoryService from '../services/retrieveFromMemory.ts';
 
 
 interface MainHeaderProps{
@@ -17,7 +20,25 @@ interface MainHeaderProps{
 }
 
 export const MainHeader = ({boton, chat}: MainHeaderProps) => {
-    const{setJWT, jwt, setCompanies, setMemories, setNewCompanyName, setNewMemoryName, setSelectedCompany, setSelectedMemory, companies, newCompanyName, newMemoryName, selectedCompanyId, selectedMemoryId}=useStore()
+    const{
+        setJWT, 
+        jwt, 
+        setSubmittedUrls, 
+        setFiles, 
+        setpdfFilenames, 
+        pdfFilenames, 
+        setCompanies, 
+        setMemories, 
+        setNewCompanyName, 
+        setNewMemoryName, 
+        setSelectedCompany, 
+        setSelectedMemory, 
+        companies, 
+        newCompanyName, 
+        newMemoryName, 
+        selectedCompanyId, 
+        selectedMemoryId
+    } = useStore()
     const isLogged = Boolean(jwt)
     const goLogin = useNavigate();
     const [match] = useRoute("/");
@@ -76,15 +97,20 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
     catch(error){console.error('Error adding memory', error);}
     };
 
-    const handleDeleteCompany = (companyId: bigint) => {
+    const handleDeleteCompany = async (companyId: bigint) => {
+        try{
         setCompanies(companies.filter(company => company.id !== companyId));
         if (selectedCompanyId === companyId) {
             setSelectedCompany(0n);
             setSelectedMemory(0n);
         }
+        const response = await deleteBusinessService(companyId);
+    }
+    catch(error){console.error('Error deleting company', error);}
     };
 
-    const handleDeleteMemory = (memoryId: bigint) => {
+    const handleDeleteMemory = async (memoryId: bigint) => {
+        try{
         if (selectedCompanyId!=0n) {
             const updatedCompanies = companies.map(company => {
                 if (company.id === selectedCompanyId) {
@@ -96,11 +122,32 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
                 return company;
             });
             setCompanies(updatedCompanies);
+            const response = await deleteMemoryService(memoryId);
             if (selectedMemoryId === memoryId) {
                 setSelectedMemory(0n);
             }
         }
+        }
+        catch(error){console.error('Error deleting memory', error);}
     };
+
+    const handleSelectMemory = async (memoryId: bigint) => {
+        setSubmittedUrls([])
+        setFiles([])
+        setpdfFilenames([])
+        console.log("memoryId: ", memoryId);
+        setSelectedMemory(memoryId);
+        const response = await retrieveFromMemoryService(memoryId);
+
+        const responseFilenames = response.filenames
+        const urls = response.urls
+        console.log("filenames: ", responseFilenames);
+        console.log("urls: ", urls);
+        setpdfFilenames(responseFilenames)
+        setSubmittedUrls(urls)
+        
+        console.log(response);
+    }
 
     const logout = useCallback(() => {
         window.sessionStorage.removeItem("jwt");
@@ -119,7 +166,6 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
             <Link to='/'><button className="header-button">→</button></Link>
         );
     }
-
     const content = renderLoginButton()
 
     const handleSelectCompany = async (companyId: bigint) => {
@@ -209,7 +255,7 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
                         {companies.find(company => company.id === selectedCompanyId)?.memories.map(memory => (
                             <Dropdown.Item 
                                 key={memory.id} 
-                                onClick={() => setSelectedMemory(memory.id)}
+                                onClick={() => handleSelectMemory(memory.id)}
                                 style={{display: 'flex', justifyContent: 'space-between'}}
                             >
                                 <span>{memory.name}</span>

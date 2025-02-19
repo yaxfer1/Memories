@@ -24,6 +24,9 @@ const initialState: State = {
     newMemoryName: '',
     selectedCompanyId: 1n,
     selectedMemoryId: 1n,
+    submittedUrls: [],
+    files: [],
+    pdfFilenames: [],
 };
 
 // Reducer
@@ -95,22 +98,25 @@ function reducer(state: State, action: Action): State {
             return { ...state, companies: action.payload };
         case 'SET_MEMORIES':
             return { ...state, companies: state.companies.map((company)=> company.id === action.payload.selectedCompany ? {...company, memories: action.payload.memories} : company)};
+        case 'SET_SUBMITTEDURLS':
+            return { ...state, submittedUrls: action.payload };
+        case 'SET_FILES':
+            return { ...state, files: action.payload };
+        case 'SET_PDFFILENAMES':
+            return { ...state, pdfFilenames: action.payload };
         default:
             return state;
     }
 }
 
-// Crear el contexto
 const StoreContext = createContext<{
     state: State;
     dispatch: React.Dispatch<Action>;
 } | null>(null);
 
-// Proveedor del contexto
 export function StoreProvider({ children }: { children: ReactNode }) {
     const [state, dispatch] = useReducer(reducer, initialState);
 
-    // Memorizar el valor del contexto para optimizar rendimiento
     const value = useMemo(() => ({ state, dispatch }), [state]);
 
     return (
@@ -156,8 +162,9 @@ export function useStore() {
     const setNewMemoryName = (payload: string) => dispatch({ type: 'SET_NEWMEMORYNAME', payload });
     const setSelectedCompany = (payload: bigint) => dispatch({ type: 'SET_SELECTEDCOMPANY', payload });
     const setSelectedMemory = (payload: bigint) => dispatch({ type: 'SET_SELECTEDMEMORY', payload });
-
-
+    const setSubmittedUrls = (payload: string[]) => dispatch({ type: 'SET_SUBMITTEDURLS', payload });
+    const setFiles = (payload: File[]) => dispatch({ type: 'SET_FILES', payload });
+    const setpdfFilenames = (payload: string[]) => dispatch({ type: 'SET_PDFFILENAMES', payload });
     return {
         ...state,
         setResult,
@@ -186,5 +193,8 @@ export function useStore() {
         setNewMemoryName,
         setSelectedCompany,
         setSelectedMemory,
+        setSubmittedUrls,
+        setFiles,
+        setpdfFilenames,
     };
 }

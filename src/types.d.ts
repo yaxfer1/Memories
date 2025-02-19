@@ -39,6 +39,9 @@ export interface State {
     newMemoryName: string;
     selectedCompanyId: bigint;
     selectedMemoryId: bigint;
+    submittedUrls: string[];
+    files: File[];
+    pdfFilenames: string[];
 }
 
 export type Action =
@@ -68,6 +71,9 @@ export type Action =
     | { type: 'SET_SELECTEDMEMORY'; payload: bigint}
     | { type: 'SET_COMPANIES'; payload: Company[] }
     | { type: 'SET_MEMORIES'; payload: {selectedCompany: bigint, memories: Memory[]} }
+    | { type: 'SET_SUBMITTEDURLS'; payload: string[] }
+    | { type: 'SET_FILES'; payload: File[] }
+    | { type: 'SET_PDFFILENAMES'; payload: string[] }
 
 export enum SectionType {
     Box1 = 'box1',

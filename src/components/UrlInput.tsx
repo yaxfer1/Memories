@@ -1,19 +1,25 @@
 import React, { useState } from "react";
+import { useStore } from "../hooks/useStore";
 const URL_SCRAPING = 'http://127.0.0.1:5000/api/scrap_url';
 
+
 const TextUploader = () => {
+    const {submittedUrls, setSubmittedUrls, selectedMemoryId} = useStore();
     const [text, setText] = useState("");
     const [uploading, setUploading] = useState(false);
-    const [submittedUrls, setSubmittedUrls] = useState([]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         sendTextToBackend(text);
     };
 
-    const sendTextToBackend = async (text) => {
+    const sendTextToBackend = async (text: string) => {
         if (!text.trim()) {
             alert("Please enter a valid URL");
+            return;
+        }
+        if (selectedMemoryId==0n) {
+            alert("Please select a memory");
             return;
         }
 
@@ -24,7 +30,7 @@ const TextUploader = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(text),
+                body: JSON.stringify({url: 	text, memory_id: selectedMemoryId}),
             });
 
             if (!res.ok) {
@@ -33,7 +39,7 @@ const TextUploader = () => {
 
             const data = await res.json();
             console.log("Server response:", data);
-            setSubmittedUrls((prevUrls) => [...prevUrls, text]);
+            setSubmittedUrls([...submittedUrls, text]);
             setText("");
         } catch (error) {
             console.error("Error sending text:", error.message);
@@ -75,7 +81,6 @@ const TextUploader = () => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        hover: "opacity: 0.5",
                     }}
                     disabled={uploading}
                 >

@@ -5,17 +5,14 @@ import {Container, Col} from 'react-bootstrap'
 
 import {Outlet} from "react-router-dom";
 import {useStore} from "../hooks/useStore.tsx";
-import useUser from "../hooks/useUser.ts";
 import {useState, useCallback} from "react";
 import MainHeader from "../components/MainHeader.tsx";
 //import {postChat} from "../services/postChat.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import DropdownMenu from '../components/DropdownMenu.jsx';
-// @ts-expect-error
-import DragAndDrop from '../components/DragAndDrop.jsx';
-// @ts-expect-error
-import UrlInput from '../components/UrlInput.jsx';
+import DragAndDrop from '../components/DragAndDrop.tsx';
+import UrlInput from '../components/UrlInput.js';
 import ChatList from '../components/ChatList.tsx';
 import Generator from '../components/Generator.tsx';
 
