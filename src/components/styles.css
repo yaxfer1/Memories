@@ -65,6 +65,7 @@
     text-decoration: none; 
 }
 
+
 .svg-button:hover {
     filter: invert(18%) sepia(92%) saturate(7471%) hue-rotate(358deg) brightness(95%) contrast(119%);
 }
@@ -229,6 +230,25 @@ nav ul li {
 
 
 .send-button:hover {
+    opacity: 0.75; /* Color de hover */
+    border-color: #0d0d0d;
+}
+
+.regenerate-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #0d0d0d;
+    color: white;
+    border: 2px solid #0d0d0d;
+    border-radius: 60px;
+    padding: 0.5vh;
+    cursor: pointer;
+    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+}
+
+
+.regenerate-button:hover {
     opacity: 0.75; /* Color de hover */
     border-color: #0d0d0d;
 }

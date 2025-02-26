@@ -17,6 +17,12 @@ export interface Memory {
 }
 
 
+export interface AgentAction {
+    tool: string;
+    query: any;
+    result: string;
+  }
+
 export interface State {
     text1: string;
     text2: string;
@@ -42,6 +48,7 @@ export interface State {
     submittedUrls: string[];
     files: File[];
     pdfFilenames: string[];
+    actions: [];
 }
 
 export type Action =
@@ -74,6 +81,7 @@ export type Action =
     | { type: 'SET_SUBMITTEDURLS'; payload: string[] }
     | { type: 'SET_FILES'; payload: File[] }
     | { type: 'SET_PDFFILENAMES'; payload: string[] }
+    | { type: 'SET_ACTIONS'; payload: AgentAction[] }
 
 export enum SectionType {
     Box1 = 'box1',

@@ -1,10 +1,12 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import { Chat } from "../types"; // Ajusta la ruta según tu estructura
+import { useNavigate } from "react-router-dom";
 //@ts-expect-error
 import loginService from "../services/login.js";
 import addChatService from "../services/addChat.ts";
 import { useStore } from "./useStore.tsx"; // Asegúrate de importar el useStore actualizado
 import { Company, Memory } from "../types";
+import {handleSelectChat} from "../components/ChatList.tsx";
 export default function useUser() {
     // Usa el useStore para acceder al estado y las acciones
     const {
@@ -15,10 +17,12 @@ export default function useUser() {
         setCurrentChatId,
         setJWT,
         setCompanies,
+        setMessages,
+        setAIMessage,
     } = useStore();
 
     const [state, setState] = useState({ loading: false, error: false });
-
+    const goChat = useNavigate()
     // Login
     const login = useCallback(
         async ({ username, password }: { username: string; password: string }) => {
@@ -78,7 +82,8 @@ export default function useUser() {
 
                 console.log(formattedChats);
                 if (formattedChats.length > 0) {
-                    setCurrentChatId(formattedChats[0].id); // Selecciona el primer chat si hay disponibles
+                    setCurrentChatId(formattedChats[0].id);
+                    goChat(formattedChats[0].id.toString());
                 } else {
                     console.log("No chats available");
                 }
@@ -172,7 +177,7 @@ export default function useUser() {
 
                 console.log(formattedBusinesses);
                 if (formattedBusinesses.length > 0) {
-                    setCurrentChatId(formattedBusinesses[0].id); // Selecciona el primer chat si hay disponibles
+                                    
                 } else {
                     console.log("No chats available");
                 }

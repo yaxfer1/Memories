@@ -14,6 +14,8 @@ import addChatService from "../services/addChat.ts";
 import useUser from "../hooks/useUser.ts";
 import deleteButton from "../assets/deleteButton.svg";
 import deleteChatService from "../services/deleteChat.ts";
+import { useLocation, useParams } from "react-router-dom";
+
 
 interface ChatListProps {
     setCurrentChatID: (value: bigint) => void;
@@ -27,7 +29,7 @@ export const ChatList = ({
     const [isEditing, setIsEditing] = useState(false);
     const [chatName, setChatName] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
-    const { setMessages, setAIMessage, addChat, jwt, deleteChat } = useStore();
+    const { setMessages, setAIMessage, addChat, jwt, deleteChat, currentChatId } = useStore();
     const { addChatUser } = useUser();
 
     const handleNewChat = async () => {
@@ -75,35 +77,18 @@ export const ChatList = ({
         }
     };
 
-    const handleSelectChat = async (chatId: bigint) => {
-        console.log(chatId);
-        setMessages([]);
+    const handleSelectChatWrapper = (chatId: bigint) => {
+        handleSelectChat(chatId, setMessages, setAIMessage, setCurrentChatID);
+      };
 
-        setAIMessage([]); 
+      const location = useLocation();
+const { chatId } = useParams(); // Extrae el ID del chat desde la URL
 
-        setCurrentChatID(chatId);
-        console.log("chatID: " + chatId.toString())
-        try {
-            const response = await getChatMessages(chatId.toString());  
-            console.log("Respuesta:", response);
-            const [mensajes, aimessages] = response[0]
-            //@ts-expect-error
-                .reduce(([mensajesAcc, aimessagesAcc], message: string, index: bigint) => {
-                    if (response[1][index] === 42) {
-                        aimessagesAcc.push(message); 
-                    } else {
-                        mensajesAcc.push(message); 
-                    }
-                    return [mensajesAcc, aimessagesAcc]; 
-                }, [[], []]); 
-
-            setMessages(mensajes)
-            setAIMessage(aimessages)
-        } catch (error) {
-            console.error("Error obteniendo los mensajes del chat:", error);
-        }
-
-    };
+useEffect(() => {
+  if (currentChatId) {
+    handleSelectChatWrapper(BigInt(currentChatId)); 
+  }
+}, []); 
 
     const handleDeleteChat = async (chatId: bigint) => {
         console.log(chatId);
@@ -153,7 +138,7 @@ export const ChatList = ({
                         <div key={chat.id.toString()} className="chat-item">
                             <Link
                                 to={`/home/${chat.id.toString()}`}
-                                onClick={() => handleSelectChat(chat.id)}
+                                onClick={() => handleSelectChatWrapper(chat.id)}
                                 className="chat-link"
                             >
                                 <div className="chat-content">
@@ -192,3 +177,39 @@ export const ChatList = ({
     );
 };
 export default ChatList;
+
+
+export const handleSelectChat = async (
+    chatId: bigint,
+    setMessages: (messages: string[]) => void,
+    setAIMessage: (messages: string[]) => void,
+    setCurrentChatID: (id: bigint) => void
+  ) => {
+    console.log(chatId);
+    setMessages([]);
+    setAIMessage([]);
+    setCurrentChatID(chatId);
+    console.log("chatID: " + chatId.toString());
+  
+    try {
+      const response = await getChatMessages(chatId.toString());
+      console.log("Respuesta:", response);
+  
+      const [mensajes, aimessages] = response[0]
+        //@ts-expect-error
+        .reduce(([mensajesAcc, aimessagesAcc], message: string, index: bigint) => {
+          if (response[1][index] === 42) {
+            aimessagesAcc.push(message);
+          } else {
+            mensajesAcc.push(message);
+          }
+          return [mensajesAcc, aimessagesAcc];
+        }, [[], []]);
+  
+      setMessages(mensajes);
+      setAIMessage(aimessages);
+    } catch (error) {
+      console.error("Error obteniendo los mensajes del chat:", error);
+    }
+  };
+  

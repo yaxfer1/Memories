@@ -1,11 +1,11 @@
 import { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
-import { Chat, State, Action, Company, Memory } from '../types';
+import { Chat, State, Action, Company, Memory, AgentAction } from '../types';
 
 // Estado inicial
 const initialState: State = {
-    text1: 'You are a helpful assistant that create news articles about mainly AI and NLP topic...',
-    text2: 'Here is the context',
-    text3: 'Explain in an article...',
+    text1: '',
+    text2: '',
+    text3: '',
     loading: false,
     result: '',
     chat: false,
@@ -27,6 +27,7 @@ const initialState: State = {
     submittedUrls: [],
     files: [],
     pdfFilenames: [],
+    actions: [],
 };
 
 // Reducer
@@ -104,6 +105,8 @@ function reducer(state: State, action: Action): State {
             return { ...state, files: action.payload };
         case 'SET_PDFFILENAMES':
             return { ...state, pdfFilenames: action.payload };
+        case 'SET_ACTIONS':
+            return { ...state, actions: action.payload };
         default:
             return state;
     }
@@ -165,6 +168,7 @@ export function useStore() {
     const setSubmittedUrls = (payload: string[]) => dispatch({ type: 'SET_SUBMITTEDURLS', payload });
     const setFiles = (payload: File[]) => dispatch({ type: 'SET_FILES', payload });
     const setpdfFilenames = (payload: string[]) => dispatch({ type: 'SET_PDFFILENAMES', payload });
+    const setActions = (payload: AgentAction[]) => dispatch({ type: 'SET_ACTIONS', payload });
     return {
         ...state,
         setResult,
@@ -196,5 +200,6 @@ export function useStore() {
         setSubmittedUrls,
         setFiles,
         setpdfFilenames,
+        setActions,
     };
 }

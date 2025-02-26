@@ -21,15 +21,15 @@ const commonStyles = {
 };
 
 const getInitialValue = ({ type, loading }: { type: SectionType; loading?: boolean }) => {
-    if (type === SectionType.Box1) return 'Este es el Box1';
-    if (type === SectionType.Box2) return 'Este es el Box2';
+    if (type === SectionType.Box1) return 'What do you want to generate a technical report about?';
+    if (type === SectionType.Box2) return '';
     if (loading === true) return 'Cargando...';
-    return 'Insert report paragraph';
+    return 'Any additional information or parameters?';
 };
 
 export const TextBox = ({ type, value, loading, onChange, showAdditionalContent, children }: TextBoxProps) => {
     const styles =
-        type === SectionType.Box3
+        type === SectionType.Box1
             ? commonStyles
             : {
                 ...commonStyles,

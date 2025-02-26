@@ -1,15 +1,14 @@
 import {Container, Button, Col, Row, Stack} from "react-bootstrap";
 import TextBox from "./TextBox.tsx";
 import {SectionType} from "../types.d";
-//@ts-expecte
-import DropdownMenu from "./DropdownMenu.jsx";
-import EditableTextBox from "./EditableTextBox.tsx";
 import ResultBox from "./ResultBox.tsx";
 import {ClipboardIcon} from "./Icons.tsx";
 import {useStore} from "../hooks/useStore.tsx";
 import {setContext} from "../services/setContext.ts";
-import {getContext} from "../services/getContext.ts";
 import {useState} from "react";
+import fetchAgentActions from "../services/AgentActionsFetcher.tsx";
+import AgentActionsList from "./AgentActionsList.tsx";
+import generateParagraph from "../services/generateParagraph.ts";
 
 function Generator () {
     const [showAdditionalContent, setShowAdditionalContent] = useState(false);
@@ -28,15 +27,23 @@ function Generator () {
         result,
         setResult,
         setLoad,
+        jwt,
+        actions,
+        setActions,
     }=useStore();
 
+    
+
+    const [error, setError] = useState('');
     const handleGetContext = async ()=> {
-        setLoad(true)
-        /*await getContext(text3).then(text2=>{
-                changeText2(text2)
-                setEditedText(text2)
+        try {
+            setLoad(true)
+            const data = await fetchAgentActions(jwt, text1);
+            setActions(data); // Se espera que 'data' sea un array con las acciones
+            setError('');
+            } catch (err: any) {
+            setError(err.message);
             }
-        ).catch(()=>changeText2('error'))*/
         changeText2("asjfnas")
         setEditedText("asjfnas")
         setShowAdditionalContent(true)
@@ -58,6 +65,19 @@ function Generator () {
         }).catch(()=>setResult('error'))
         setLoad(false)
     };
+
+    const handleGenerateParagraph = async () =>{
+        setLoad(true)
+        try{
+            
+            const result = await generateParagraph(jwt, (text1 + '|||' + actions.map((action)=> (action.result)) + '|||' + text3))
+            setResult(result)
+        }
+        catch(err: any){
+            setError(err.message)
+        }
+        setLoad(false)
+    }
 
     const handleClipboard = () => {
         navigator.clipboard.writeText(result).catch(() => {})
@@ -88,38 +108,24 @@ function Generator () {
                     marginBottom: "20px"
                 }}>
                     <Stack gap={3}>
-                        {showAdditionalContent && (
-                            <div style={{marginBottom: "20px", textAlign: "center"}}>
-                                <h2 style={{color: "#0d0d0d"}}>Prompt Structure</h2>
-                            </div>
-                        )}
+                        <TextBox
+                            type={SectionType.Box1}
+                            value={text1}
+                            onChange={changeText1}
+                            showAdditionalContent={!showAdditionalContent}
+                        />
                         
+                        {showAdditionalContent && (actions.length > 0 &&(<AgentActionsList></AgentActionsList>))}
+
                         {showAdditionalContent && (
                             <TextBox
-                                type={SectionType.Box1}
-                                value={text1}
-                                onChange={changeText1}
+                                type={SectionType.Box3}
+                                value={text3}
+                                onChange={changeText3}
                                 showAdditionalContent={showAdditionalContent}
                             />
                         )}
-                        
-                        {showAdditionalContent && (
-                            <EditableTextBox
-                                editedText={editedText}
-                                setShowModal={setShowModal}
-                                onChange={setEditedText}
-                                showModal={showModal}
-                                text={text2}
-                                setText={changeText2}
-                            />
-                        )}
 
-                        <TextBox
-                            type={SectionType.Box3}
-                            value={text3}
-                            onChange={changeText3}
-                            showAdditionalContent={!showAdditionalContent}
-                        />
 
                         {showAdditionalContent && (
                             <Button
@@ -130,16 +136,16 @@ function Generator () {
                                     border: "2px solid #0d0d0d",
                                     transition: "border-color 0.2s ease-in-out, opacity 0.2s ease-in-out"
                                 }}
-                                onClick={handleTextChange}
+                                onClick={handleGenerateParagraph}
                                 disabled={loading}
-                                className="send-button"
+                                className="regenerate-button"
                             >
                                 {loading ? (
                                     <div className="loader-container">
                                         <div className="loader"></div>
                                     </div>
                                 ) : (
-                                    "Send"
+                                    "Regenerate"
                                 )}
                             </Button>
                         )}
@@ -152,7 +158,7 @@ function Generator () {
                         maxWidth: "800px",
                         marginTop: "20px"
                     }}>
-                        <ResultBox result={result} text1={text1} text2={text2} text3={text3}/>
+                        <ResultBox result={result} text1={text1} text3={text3}/>
                         <div style={{textAlign: "right", marginTop: "10px"}}>
                             <Button
                                 variant='link'
