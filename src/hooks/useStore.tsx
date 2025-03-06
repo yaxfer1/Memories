@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
-import { Chat, State, Action, Company, Memory, AgentAction } from '../types';
+import { Chat, State, Action, Company, Memory, AgentAction, Report } from '../types';
 
 // Estado inicial
 const initialState: State = {
@@ -28,6 +28,8 @@ const initialState: State = {
     files: [],
     pdfFilenames: [],
     actions: [],
+    reports: [],
+    currentReportId: 1n,
 };
 
 // Reducer
@@ -107,6 +109,12 @@ function reducer(state: State, action: Action): State {
             return { ...state, pdfFilenames: action.payload };
         case 'SET_ACTIONS':
             return { ...state, actions: action.payload };
+        case 'ADD_REPORT':
+            return { ...state, reports: [...state.reports, action.payload] };
+        case 'SET_REPORTS':
+            return { ...state, reports: action.payload };
+        case 'SET_CURRENTREPORTID':
+            return { ...state, currentReportId: action.payload };
         default:
             return state;
     }
@@ -169,6 +177,9 @@ export function useStore() {
     const setFiles = (payload: File[]) => dispatch({ type: 'SET_FILES', payload });
     const setpdfFilenames = (payload: string[]) => dispatch({ type: 'SET_PDFFILENAMES', payload });
     const setActions = (payload: AgentAction[]) => dispatch({ type: 'SET_ACTIONS', payload });
+    const addReport = (payload: Report) => dispatch({ type: 'ADD_REPORT', payload });
+    const setReports = (payload: Report[]) => dispatch({ type: 'SET_REPORTS', payload });
+    const setCurrentReportId = (payload: bigint) => dispatch({ type: 'SET_CURRENTREPORTID', payload });
     return {
         ...state,
         setResult,
@@ -201,5 +212,8 @@ export function useStore() {
         setFiles,
         setpdfFilenames,
         setActions,
+        addReport,
+        setReports,
+        setCurrentReportId,
     };
 }

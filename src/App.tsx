@@ -5,9 +5,10 @@ import HomePage from "./pages/Home";
 import { StoreProvider, useStore } from "./hooks/useStore.tsx";
 import "./App.css";
 import ChatBox from "./components/ChatBox.tsx";
+import Generator from "./components/Generator.tsx";
 
 // ✅ Componente para rutas protegidas
-function PrivateRoute({ children }) {
+function PrivateRoute({ children }: { children: React.ReactNode }) {
     const { jwt } = useStore(); // Verifica si el usuario está autenticado
     return jwt ? children : <Navigate to="/" replace />;
 }
@@ -23,7 +24,7 @@ export default function App() {
                                 {/* ✅ Si el usuario no está logueado, va a Login */}
                                 <Route path="/" element={<Login />} />
 
-                                {/* ✅ Si está logueado, puede acceder a Home */}
+                                {/* ✅ Ruta principal del Home que redirige al generador por defecto */}
                                 <Route
                                     path="/home"
                                     element={
@@ -32,7 +33,15 @@ export default function App() {
                                         //</PrivateRoute>
                                     }
                                 >
-                                    <Route path=":chatID" element={<ChatBox />} />
+                                    {/* Ruta por defecto - redirige a generator */}
+                                    <Route index element={<Navigate to="generator" replace />} />
+                                    
+                                    {/* Ruta para el generador */}
+                                    <Route path="generator" element={<Generator />} />
+                                    <Route path="generator/:reportID" element={<Generator />} />
+                                    {/* Ruta para el chat con parámetro opcional de chatID */}
+                                    <Route path="chat" element={<ChatBox />} />
+                                    <Route path="chat/:chatID" element={<ChatBox />} />
                                 </Route>
 
                                 {/* Redirección de rutas no encontradas */}

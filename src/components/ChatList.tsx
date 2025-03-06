@@ -137,7 +137,7 @@ useEffect(() => {
                     .map((chat) => (
                         <div key={chat.id.toString()} className="chat-item">
                             <Link
-                                to={`/home/${chat.id.toString()}`}
+                                to={`/home/chat/${chat.id.toString()}`}
                                 onClick={() => handleSelectChatWrapper(chat.id)}
                                 className="chat-link"
                             >

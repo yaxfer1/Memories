@@ -12,7 +12,7 @@ import deleteButton from "../assets/deleteButton.svg";
 import deleteBusinessService from '../services/deleteBusiness.ts';
 import deleteMemoryService from '../services/deleteMemory.ts';
 import retrieveFromMemoryService from '../services/retrieveFromMemory.ts';
-
+import getReportService from "../services/getReports.ts";
 
 interface MainHeaderProps{
     boton: () => void
@@ -37,7 +37,9 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
         newCompanyName, 
         newMemoryName, 
         selectedCompanyId, 
-        selectedMemoryId
+        selectedMemoryId,
+        reports,
+        setReports,
     } = useStore()
     const isLogged = Boolean(jwt)
     const goLogin = useNavigate();
@@ -76,7 +78,8 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
             console.log(response)
             const newMemory: Memory = {
                 id: BigInt(response),
-                name: newMemoryName
+                name: newMemoryName,
+                reports: [],
             };
             const updatedCompanies = companies.map(company => {
                 if (company.id === selectedCompanyId) {
@@ -143,9 +146,11 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
         const urls = response.urls
         console.log("filenames: ", responseFilenames);
         console.log("urls: ", urls);
+        const reports = response.reports
+        console.log("reports: ", reports)
         setpdfFilenames(responseFilenames)
         setSubmittedUrls(urls)
-        
+        setReports(response.reports)
         console.log(response);
     }
 
@@ -178,7 +183,8 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
 
             const formattedMemories: Memory[] = ids.map((id: bigint, index: number) => ({
                 id: id,
-                name: names[index],  
+                name: names[index], 
+                reports: [], 
             }));
 
             console.log(formattedMemories);
@@ -294,7 +300,22 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
             </div>
 
             <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginRight: '10px'}}>
-                <button onClick={boton} className="header-button">
+                <button
+                    onClick={boton}
+                    style={{
+                        width: '30px',
+                        height: '30px',
+                        backgroundColor: 'transparent',
+                        border: '2px solid #0d6efd',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 0,
+                        color: '#0d6efd',
+                    }}
+                >
                     {chat ? '💬' : '📄'}
                 </button>
                 {content}

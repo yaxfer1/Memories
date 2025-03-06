@@ -83,7 +83,7 @@ export default function useUser() {
                 console.log(formattedChats);
                 if (formattedChats.length > 0) {
                     setCurrentChatId(formattedChats[0].id);
-                    goChat(formattedChats[0].id.toString());
+                    //goChat(formattedChats[0].id.toString());
                 } else {
                     console.log("No chats available");
                 }

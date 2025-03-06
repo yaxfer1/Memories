@@ -14,6 +14,16 @@ export interface Company {
 export interface Memory {
     id: bigint;
     name: string;
+    reports: Report[];
+}
+
+export interface Report{
+    id: bigint;
+    name: string;
+    tools_result: AgentAction[];
+    text1: string;
+    text2: string;
+    result: string;
 }
 
 
@@ -38,6 +48,7 @@ export interface State {
     email: string;
     password: string;
     currentChatId: bigint;
+    currentReportId: bigint;
     chats: Chat[];
     jwt: string;
     companies: Company[];
@@ -48,7 +59,8 @@ export interface State {
     submittedUrls: string[];
     files: File[];
     pdfFilenames: string[];
-    actions: [];
+    actions: AgentAction[];
+    reports: Report[];
 }
 
 export type Action =
@@ -82,6 +94,9 @@ export type Action =
     | { type: 'SET_FILES'; payload: File[] }
     | { type: 'SET_PDFFILENAMES'; payload: string[] }
     | { type: 'SET_ACTIONS'; payload: AgentAction[] }
+    | { type: 'SET_REPORTS'; payload: Report[] }
+    | { type: 'ADD_REPORT' ; payload: Report}
+    | { type: 'SET_CURRENTREPORTID' ; payload: bigint}
 
 export enum SectionType {
     Box1 = 'box1',
