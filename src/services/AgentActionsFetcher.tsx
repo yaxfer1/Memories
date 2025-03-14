@@ -3,13 +3,15 @@ import AgentActionsList from '../components/AgentActionsList';
 
 const ENDPOINT = 'http://127.0.0.1:5000/api';
 
-export async function fetchAgentActions(jwt: string, query: string): Promise<any> {
+export async function fetchAgentActions(jwt: string, query: string, repId:bigint): Promise<any> {
+  const repIdstr = repId.toString()
+  console.log(repIdstr)
   return fetch(`${ENDPOINT}/agent_actions`, {
     method: 'POST',
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ query, jwt })
+    body: JSON.stringify({ query, jwt, repIdstr })
   })
     .then(res => {
       if (!res.ok) throw new Error('Response is NOT ok');

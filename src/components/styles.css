@@ -3,12 +3,29 @@
     align-items: center;
     position: fixed;
     top: 2vh;
-    right: 0;
-    width: 20vw;
+    left: 15vw; /* Posicionado justo a la derecha de la columna izquierda */
+    width: auto;
     height: 1vh;
-    justify-content: space-between;
-    z-index: 1;
+    justify-content: flex-start;
+    z-index: 10;
     opacity: 1;
+    padding: 0 10px;
+}
+
+.header-left {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    max-width: 14vw;
+}
+
+.header-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    position: fixed;
+    top: 2vh;
+    right: 20px;
 }
 
 .col-list{

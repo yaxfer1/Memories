@@ -30,7 +30,6 @@ export const ChatList = ({
     const [chatName, setChatName] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
     const { setMessages, setAIMessage, addChat, jwt, deleteChat, currentChatId } = useStore();
-    const { addChatUser } = useUser();
 
     const handleNewChat = async () => {
         try {
@@ -88,7 +87,7 @@ useEffect(() => {
   if (currentChatId) {
     handleSelectChatWrapper(BigInt(currentChatId)); 
   }
-}, []); 
+}, []);
 
     const handleDeleteChat = async (chatId: bigint) => {
         console.log(chatId);

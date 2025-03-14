@@ -14,19 +14,20 @@ import UrlInput from '../components/UrlInput.js';
 import ChatList from '../components/ChatList.tsx';
 import Generator from '../components/Generator.tsx';
 import ReportList from '../components/ReportList.tsx';
-
+import useUser from '../hooks/useUser.ts';
 function HomePage () {
     const{
         chat,
         chats,
         setChat,
         setCurrentChatId,
+        setIsSelectedCompanyAndMemory
     } = useStore();
-    
+    const {addChatUser} = useUser();
     const [hovering, setHovering] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
-    
+    //setIsSelectedCompanyAndMemory(false);
     // Determinar si estamos en modo chat basado en la URL
     const isInChatMode = location.pathname.includes('/home/chat');
 
@@ -124,9 +125,10 @@ function HomePage () {
             <Container 
                 className={isInChatMode ? "containerChat" : "containerGenerator"} 
                 style={{
-                    marginTop:'0px', 
-                    width: isInChatMode ? '100vw' : '60vw', 
-                    height: '100vh', 
+                    marginTop:'8vh', 
+                    marginLeft: '18vw',
+                    width: isInChatMode ? '62vw' : '60vw', 
+                    height: '92vh', 
                     overflow: 'hidden'
                 }}
             >

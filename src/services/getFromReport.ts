@@ -1,13 +1,13 @@
 const ENDPOINT = 'http://127.0.0.1:5000/api';
 
-export default function retrieveFromMemoryService( memory_id: bigint ) {
-    const memostr = memory_id.toString();
-    return fetch(`${ENDPOINT}/retrieve_from_memory`, {
+export default function getFromReport( report_id: bigint ) {
+    const reportstr = report_id.toString()
+    return fetch(`${ENDPOINT}/get_fromreport`, {
         method: 'POST',
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ memostr })
+        body: JSON.stringify({ reportstr })
     })
         .then(res => {
             if (!res.ok) throw new Error('Response is NOT ok');

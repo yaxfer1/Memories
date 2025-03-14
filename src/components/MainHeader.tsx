@@ -40,6 +40,8 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
         selectedMemoryId,
         reports,
         setReports,
+        setIsSelectedCompanyAndMemory
+        
     } = useStore()
     const isLogged = Boolean(jwt)
     const goLogin = useNavigate();
@@ -150,8 +152,9 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
         console.log("reports: ", reports)
         setpdfFilenames(responseFilenames)
         setSubmittedUrls(urls)
-        setReports(response.reports)
+        setReports(reports)
         console.log(response);
+        setIsSelectedCompanyAndMemory(true)
     }
 
     const logout = useCallback(() => {
@@ -201,7 +204,9 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
     }
     return (
         <header id="mainheader">
-            <div style={{ display: 'flex', gap: '5px', alignItems: 'center', maxWidth: '7vw'}}>
+            <div className="header-left">
+                {chat && (
+                <>
                 <Dropdown style={{width: '100%', maxWidth: '7vw'}}>
                     <Dropdown.Toggle variant="dark" className="header-dropdown" style={{maxWidth:"7vw", textOverflow:"ellipsis", overflow:"hidden", whiteSpace:"nowrap"}}>
                         {companies.find(company => company.id === selectedCompanyId)?.name || "Empresa"}
@@ -212,6 +217,7 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
                                 key={company.id} 
                                 onClick={() => handleSelectCompany(company.id)}
                                 style={{display: 'flex', justifyContent: 'space-between'}}
+                    
                             >
                                 <span>{company.name}</span>
                                 <button  
@@ -297,9 +303,12 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
                         </Dropdown.Item>
                     </Dropdown.Menu>
                 </Dropdown>
+                </>
+                )
+            }
             </div>
 
-            <div style={{ display: 'flex', gap: '15px', alignItems: 'center', marginRight: '10px'}}>
+            <div className="header-right">
                 <button
                     onClick={boton}
                     style={{

@@ -11,7 +11,6 @@ import AgentActionsList from "./AgentActionsList.tsx";
 import generateParagraph from "../services/generateParagraph.ts";
 
 function Generator () {
-    const [showAdditionalContent, setShowAdditionalContent] = useState(false);
     const{
         text1,
         changeText1,
@@ -30,6 +29,10 @@ function Generator () {
         jwt,
         actions,
         setActions,
+        generatorAdditionalContent,
+        setAdditionalContentGenerator,
+        currentReportId,
+        isSelectedBusinessAndMemory,
     }=useStore();
 
     
@@ -38,7 +41,7 @@ function Generator () {
     const handleGetContext = async ()=> {
         try {
             setLoad(true)
-            const data = await fetchAgentActions(jwt, text1);
+            const data = await fetchAgentActions(jwt, text1, currentReportId);
             setActions(data); // Se espera que 'data' sea un array con las acciones
             setError('');
             } catch (err: any) {
@@ -46,7 +49,7 @@ function Generator () {
             }
         changeText2("asjfnas")
         setEditedText("asjfnas")
-        setShowAdditionalContent(true)
+        setAdditionalContentGenerator(true)
         setLoad(false)
 
     }
@@ -70,7 +73,7 @@ function Generator () {
         setLoad(true)
         try{
             
-            const result = await generateParagraph(jwt, (text1 + '|||' + actions.map((action)=> (action.result)) + '|||' + text3))
+            const result = await generateParagraph(jwt, (text1 + '|||' + actions.map((action)=> (action.result)) + '|||' + text3), text1, text3, currentReportId)
             setResult(result)
         }
         catch(err: any){
@@ -86,7 +89,7 @@ function Generator () {
     return(
         <Container className="containerGen" style={{
             position: "absolute",
-            top: "5vh",
+            top: "8vh",
             left: "50%",
             transform: "translateX(-50%)",
             width: "60vw",
@@ -112,22 +115,24 @@ function Generator () {
                             type={SectionType.Box1}
                             value={text1}
                             onChange={changeText1}
-                            showAdditionalContent={!showAdditionalContent}
+                            showAdditionalContent={!generatorAdditionalContent}
                         />
                         
-                        {showAdditionalContent && (actions.length > 0 &&(<AgentActionsList></AgentActionsList>))}
+                        {generatorAdditionalContent && (actions.length > 0 &&(<AgentActionsList></AgentActionsList>))}
 
-                        {showAdditionalContent && (
+                        {generatorAdditionalContent && (
                             <TextBox
                                 type={SectionType.Box3}
                                 value={text3}
                                 onChange={changeText3}
-                                showAdditionalContent={showAdditionalContent}
+                                showAdditionalContent={generatorAdditionalContent}
                             />
                         )}
+                        
+                        
 
 
-                        {showAdditionalContent && (
+                        {generatorAdditionalContent && (
                             <Button
                                 style={{
                                     marginTop: "20px",
@@ -152,7 +157,7 @@ function Generator () {
                     </Stack>
                 </Col>
 
-                {showAdditionalContent && (
+                {generatorAdditionalContent && (
                     <Col style={{
                         width: "100%",
                         maxWidth: "800px",
@@ -169,7 +174,7 @@ function Generator () {
                     </Col>
                 )}
 
-                {!showAdditionalContent && (
+                {!generatorAdditionalContent && isSelectedBusinessAndMemory && (
                     <Button
                         style={{
                             marginTop: "20px",

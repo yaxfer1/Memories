@@ -30,6 +30,8 @@ const initialState: State = {
     actions: [],
     reports: [],
     currentReportId: 1n,
+    generatorAdditionalContent: false,
+    isSelectedBusinessAndMemory: false,
 };
 
 // Reducer
@@ -115,6 +117,10 @@ function reducer(state: State, action: Action): State {
             return { ...state, reports: action.payload };
         case 'SET_CURRENTREPORTID':
             return { ...state, currentReportId: action.payload };
+        case 'SET_ADDITIONALCONTENTGENERATOR':
+            return {...state, generatorAdditionalContent: action.payload};
+        case 'SET_ISSELECTEDCOMPANYANDMEMORY':
+            return {...state, isSelectedBusinessAndMemory: action.payload};
         default:
             return state;
     }
@@ -180,6 +186,8 @@ export function useStore() {
     const addReport = (payload: Report) => dispatch({ type: 'ADD_REPORT', payload });
     const setReports = (payload: Report[]) => dispatch({ type: 'SET_REPORTS', payload });
     const setCurrentReportId = (payload: bigint) => dispatch({ type: 'SET_CURRENTREPORTID', payload });
+    const setAdditionalContentGenerator = (payload: boolean) => dispatch({type: 'SET_ADDITIONALCONTENTGENERATOR', payload});
+    const setIsSelectedCompanyAndMemory = (payload: boolean) => dispatch({type: 'SET_ISSELECTEDCOMPANYANDMEMORY', payload});
     return {
         ...state,
         setResult,
@@ -215,5 +223,7 @@ export function useStore() {
         addReport,
         setReports,
         setCurrentReportId,
+        setIsSelectedCompanyAndMemory,
+        setAdditionalContentGenerator,
     };
 }

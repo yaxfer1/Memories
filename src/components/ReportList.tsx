@@ -4,25 +4,24 @@ import {
     Button,
 } from "react-bootstrap";
 import "./styles.css";
-import {Chat} from "../types";
+import {Report, AgentAction} from "../types";
 import {Link} from "react-router-dom"
 //import ChatBox from "./ChatBox.tsx";
 import {useStore} from "../hooks/useStore.tsx"
 //@ts-expect-error
 import getChatMessages from "../services/getChatMessages.js";
 import addReportService from "../services/addReport.ts";
-import useUser from "../hooks/useUser.ts";
 import deleteButton from "../assets/deleteButton.svg";
 import deleteChatService from "../services/deleteChat.ts";
 import { useLocation, useParams } from "react-router-dom";
-
+import getFromReport from "../services/getFromReport.ts";
 
 
 export const ReportList = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [reportName, setReportName] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
-    const { setActions, actions, text1, text3, changeText1, changeText3, addReport, jwt, currentReportId, reports, setReports, selectedMemoryId } = useStore();
+    const { setAdditionalContentGenerator, setActions, actions, text1, text3, changeText1, changeText3, addReport, jwt, currentReportId, setCurrentReportId, reports, setReports, selectedMemoryId, setResult} = useStore();
     const handleNewReport = async () => {
         try {
             const reportsadded = await addReportService(jwt, selectedMemoryId,reportName);
@@ -69,25 +68,25 @@ export const ReportList = () => {
         }
     };
 
-    const handleSelectChatWrapper = (chatId: bigint) => {
-        //handleSelectChat(chatId, setMessages, setAIMessage, setCurrentChatID)
+    const handleSelectReportWrapper = (reportId: bigint) => {
+        handleSelectReport(reportId, setCurrentReportId, reports, changeText1, changeText3, setResult, setAdditionalContentGenerator, setActions)
       };
 
       const location = useLocation();
-const { chatId } = useParams(); 
+const { reportId } = useParams(); 
 
 useEffect(() => {
   if (currentReportId) {
-    handleSelectChatWrapper(BigInt(currentReportId)); 
+    handleSelectReportWrapper(BigInt(currentReportId)); 
   }
 }, []); 
 
-    const handleDeleteChat = async (chatId: bigint) => {
-        console.log(chatId);
+    const handleDeleteChat = async (reportId: bigint) => {
+        console.log(reportId);
         //deleteChat(chatId);
         //console.log(chats)
         try {
-            const response = await deleteChatService(chatId);  
+            const response = await deleteChatService(reportId);  
             console.log(response)
         } catch (error) {
             console.error("Error obteniendo los mensajes del chat:", error);
@@ -130,7 +129,7 @@ useEffect(() => {
                         <div key={report.id.toString()} className="chat-item">
                             <Link
                                 to={`/home/generator/${report.id.toString()}`}
-                                onClick={() => handleSelectChatWrapper(report.id)}
+                                onClick={() => handleSelectReportWrapper(report.id)}
                                 className="chat-link"
                             >
                                 <div className="chat-content">
@@ -171,37 +170,48 @@ useEffect(() => {
 export default ReportList;
 
 
-export const handleSelectChat = async (
-    chatId: bigint,
-    setMessages: (messages: string[]) => void,
-    setAIMessage: (messages: string[]) => void,
-    setCurrentChatID: (id: bigint) => void
-  ) => {
-    console.log(chatId);
-    setMessages([]);
-    setAIMessage([]);
-    setCurrentChatID(chatId);
-    console.log("chatID: " + chatId.toString());
-  
-    try {
-      const response = await getChatMessages(chatId.toString());
-      console.log("Respuesta:", response);
-  
-      const [mensajes, aimessages] = response[0]
-        //@ts-expect-error
-        .reduce(([mensajesAcc, aimessagesAcc], message: string, index: bigint) => {
-          if (response[1][index] === 42) {
-            aimessagesAcc.push(message);
-          } else {
-            mensajesAcc.push(message);
-          }
-          return [mensajesAcc, aimessagesAcc];
-        }, [[], []]);
-  
-      setMessages(mensajes);
-      setAIMessage(aimessages);
-    } catch (error) {
-      console.error("Error obteniendo los mensajes del chat:", error);
+export const handleSelectReport = async (
+    reportId: bigint,
+    setCurrentReportId: (id: bigint) => void,
+    reports: Report[],
+    changeText1: (text: string) => void,
+    changeText3: (text: string) => void,
+    setResult: (text: string) => void,
+    setAdditionalContentGenerator: (a: boolean) => void,
+    setActions: (action: AgentAction[]) => void
+) => {
+    setCurrentReportId(reportId);
+
+    // Obtener la data del reporte
+    const response = await getFromReport(reportId);
+    console.log("Respuesta recibida:", response);
+
+    if (!Array.isArray(response) || response.length < 2) {
+        console.error("Formato de respuesta inesperado:", response);
+        setAdditionalContentGenerator(false);
+        return;
     }
-  };
-  
+
+    // Extraer los valores correctos
+    const reportData = response[0]; // Primer objeto con TEXT1 y TEXT2
+    const tools = Array.isArray(response[1]) ? response[1] : []; // Segundo elemento (lista de herramientas)
+
+    console.log("Tools:", tools);
+    console.log("Report Data:", reportData);
+
+    // Buscar el reporte en la lista de reports
+
+    setAdditionalContentGenerator(true);
+    if (tools.length > 0) {
+        setActions(tools);
+        setAdditionalContentGenerator(true);
+    } else {
+         setAdditionalContentGenerator(false);
+    }
+
+        // Asignar los textos del reporte
+    changeText1(reportData.TEXT1 || ""); // Evitar valores undefined
+    changeText3(reportData.TEXT2 || "");
+    setResult(reportData.RESULT || "");
+    
+};
