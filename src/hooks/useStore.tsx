@@ -8,7 +8,7 @@ const initialState: State = {
     text3: '',
     loading: false,
     result: '',
-    chat: false,
+    chat: true,
     messages: [],
     aimessages: [],
     newMessage: '',
@@ -32,6 +32,7 @@ const initialState: State = {
     currentReportId: 1n,
     generatorAdditionalContent: false,
     isSelectedBusinessAndMemory: false,
+    finalMemory: '',
 };
 
 // Reducer
@@ -121,6 +122,8 @@ function reducer(state: State, action: Action): State {
             return {...state, generatorAdditionalContent: action.payload};
         case 'SET_ISSELECTEDCOMPANYANDMEMORY':
             return {...state, isSelectedBusinessAndMemory: action.payload};
+        case 'SET_FINALMEMORY':
+            return { ...state, finalMemory: action.payload };
         default:
             return state;
     }
@@ -188,6 +191,7 @@ export function useStore() {
     const setCurrentReportId = (payload: bigint) => dispatch({ type: 'SET_CURRENTREPORTID', payload });
     const setAdditionalContentGenerator = (payload: boolean) => dispatch({type: 'SET_ADDITIONALCONTENTGENERATOR', payload});
     const setIsSelectedCompanyAndMemory = (payload: boolean) => dispatch({type: 'SET_ISSELECTEDCOMPANYANDMEMORY', payload});
+    const setFinalMemory = (payload: string) => dispatch({ type: 'SET_FINALMEMORY', payload });
     return {
         ...state,
         setResult,
@@ -225,5 +229,6 @@ export function useStore() {
         setCurrentReportId,
         setIsSelectedCompanyAndMemory,
         setAdditionalContentGenerator,
+        setFinalMemory,
     };
 }

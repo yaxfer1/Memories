@@ -1,7 +1,6 @@
 import React from 'react';
 import {Form} from 'react-bootstrap';
 import {SectionType} from '../types.d';
-
 interface TextBoxProps {
     type: SectionType;
     value: string;
@@ -9,6 +8,7 @@ interface TextBoxProps {
     onChange: (value: string) => void;
     showAdditionalContent: boolean;
     children?: React.ReactNode; // Acepta elementos hijos
+    isSelectedBusinessAndMemory: boolean;
 }
 
 const commonStyles = {
@@ -20,14 +20,16 @@ const commonStyles = {
     boxShadow: "none",
 };
 
-const getInitialValue = ({ type, loading }: { type: SectionType; loading?: boolean }) => {
-    if (type === SectionType.Box1) return 'What do you want to generate a technical report about?';
+const getInitialValue = ({ type, loading, isSelectedBusinessAndMemory }: { type: SectionType; loading?: boolean; isSelectedBusinessAndMemory: boolean }) => {
+    if (type === SectionType.Box1) return isSelectedBusinessAndMemory 
+    ?"What do you want to generate a technical report about?"
+    : 'Please select a business and a memory';
     if (type === SectionType.Box2) return '';
     if (loading === true) return 'Cargando...';
     return 'Any additional information or parameters?';
 };
 
-export const TextBox = ({ type, value, loading, onChange, showAdditionalContent, children }: TextBoxProps) => {
+export const TextBox = ({ type, value, loading, onChange, showAdditionalContent, children, isSelectedBusinessAndMemory}: TextBoxProps) => {
     const styles =
         type === SectionType.Box1
             ? commonStyles
@@ -47,7 +49,7 @@ export const TextBox = ({ type, value, loading, onChange, showAdditionalContent,
                 autoFocus={type === SectionType.Box1}
                 as={'textarea'}
                 cols={1000}
-                placeholder={getInitialValue({ type, loading })}
+                placeholder={getInitialValue({ type, loading, isSelectedBusinessAndMemory })}
                 value={value}
                 // @ts-ignore
                 style={styles}

@@ -207,8 +207,8 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
             <div className="header-left">
                 {chat && (
                 <>
-                <Dropdown style={{width: '100%', maxWidth: '7vw'}}>
-                    <Dropdown.Toggle variant="dark" className="header-dropdown" style={{maxWidth:"7vw", textOverflow:"ellipsis", overflow:"hidden", whiteSpace:"nowrap"}}>
+                <Dropdown style={{width: '100%'}}>
+                    <Dropdown.Toggle variant="dark" className="header-dropdown" style={{textOverflow:"ellipsis", overflow:"hidden", whiteSpace:"nowrap"}}>
                         {companies.find(company => company.id === selectedCompanyId)?.name || "Empresa"}
                     </Dropdown.Toggle>
                     <Dropdown.Menu>
@@ -254,12 +254,12 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
                     </Dropdown.Menu>
                 </Dropdown>
 
-                <Dropdown>
+                <Dropdown style={{marginLeft: "10px"}}>
                     <Dropdown.Toggle 
                         variant="dark" 
                         className="header-dropdown"
                         disabled={selectedCompanyId==0n}
-                        style={{maxWidth:"7vw", textOverflow:"ellipsis", overflow:"hidden", whiteSpace:"nowrap"}}
+                        style={{ textOverflow:"ellipsis", overflow:"hidden", whiteSpace:"nowrap"}}
                     >
                         {companies.find(company => company.id === selectedCompanyId)?.memories.find(memory => memory.id === selectedMemoryId)?.name || "Memoria"}
                     </Dropdown.Toggle>
@@ -311,19 +311,8 @@ export const MainHeader = ({boton, chat}: MainHeaderProps) => {
             <div className="header-right">
                 <button
                     onClick={boton}
-                    style={{
-                        width: '30px',
-                        height: '30px',
-                        backgroundColor: 'transparent',
-                        border: '2px solid #0d6efd',
-                        borderRadius: '50%',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 0,
-                        color: '#0d6efd',
-                    }}
+                    className="header-button"
+
                 >
                     {chat ? '💬' : '📄'}
                 </button>

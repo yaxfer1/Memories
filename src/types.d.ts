@@ -61,8 +61,9 @@ export interface State {
     pdfFilenames: string[];
     actions: AgentAction[];
     reports: Report[];
-    generatorAdditionalContent : boolean;
-    isSelectedBusinessAndMemory : boolean;
+    generatorAdditionalContent: boolean;
+    isSelectedBusinessAndMemory: boolean;
+    finalMemory: string;
 }
 
 export type Action =
@@ -101,6 +102,7 @@ export type Action =
     | { type: 'SET_CURRENTREPORTID' ; payload: bigint}
     | { type: 'SET_ADDITIONALCONTENTGENERATOR'; payload: boolean}
     | { type: 'SET_ISSELECTEDCOMPANYANDMEMORY'; payload: boolean}
+    | { type: 'SET_FINALMEMORY'; payload: string}
 
 export enum SectionType {
     Box1 = 'box1',

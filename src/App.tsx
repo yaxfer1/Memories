@@ -34,7 +34,7 @@ export default function App() {
                                     }
                                 >
                                     {/* Ruta por defecto - redirige a generator */}
-                                    <Route index element={<Navigate to="generator" replace />} />
+                                    <Route index element={<Navigate to="chat" replace />} />
                                     
                                     {/* Ruta para el generador */}
                                     <Route path="generator" element={<Generator />} />

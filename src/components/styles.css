@@ -2,8 +2,8 @@
     display: flex;
     align-items: center;
     position: fixed;
-    top: 2vh;
-    left: 15vw; /* Posicionado justo a la derecha de la columna izquierda */
+    top: min(4vh, 20px);
+    left: max(min(15vw,250px), 160px); /* Posicionado justo a la derecha de la columna izquierda */
     width: auto;
     height: 1vh;
     justify-content: flex-start;
@@ -16,7 +16,7 @@
     display: flex;
     gap: 5px;
     align-items: center;
-    max-width: 14vw;
+    max-width: 25vw;
 }
 
 .header-right {
@@ -35,7 +35,8 @@
     min-height: 100vh;
     height: 100vh;
     width: 15vw;
-    max-width: 15vw;
+    max-width: 240px;
+    min-width: 160px;
     left: 0px;
     padding: 0px;
     background-color: #f0f0f0;
@@ -48,6 +49,8 @@
     min-height: 100vh;
     height: 100vh;
     width: 15vw;
+    max-width: 240px;
+    min-width: 160px;
     left: 0px;
     overflow-y: auto;
     padding: 10px;
@@ -89,7 +92,9 @@
 
 .chat-content {
     padding: 10px;
-    min-width: 13vw;
+    width: 13vw;
+    max-width: 220px;
+    min-width: 140px;
     background-color: #f0f0f0; 
     border-radius: 8px; 
     cursor: pointer;
@@ -295,5 +300,116 @@ nav ul li {
 .dropdown-item-custom{
     display: flex;
     justify-content: space-between;
+}
+
+.final-memory-view {
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.final-memory-view .card {
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.final-memory-view .card:hover {
+    transform: translateY(-2px);
+}
+
+.final-memory-view .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.final-memory-view .card-body {
+    padding: 15px;
+}
+
+.final-memory-view .list-group-item {
+    padding: 0;
+    border: none;
+    margin-bottom: 10px;
+}
+
+.final-memory-view .list-group-item:last-child {
+    margin-bottom: 0;
+}
+
+.final-memory-view .btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+}
+
+.final-memory-view .btn-outline-primary:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.final-memory-view .modal-xl {
+    max-width: 90%;
+}
+
+.final-memory-view .modal-body {
+    padding: 0;
+}
+
+.final-memory-view .modal-content {
+    height: 90vh;
+}
+
+.final-memory-view .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.final-memory-view .modal-title {
+    font-weight: 600;
+}
+
+.final-memory-view .text-truncate {
+    max-width: 300px;
+}
+
+.final-memory-view .d-flex {
+    gap: 10px;
+}
+
+.final-memory-view .mb-3 {
+    margin-bottom: 1rem;
+}
+
+.final-memory-view .mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.final-memory-view .mb-1 {
+    margin-bottom: 0.25rem;
+}
+
+.final-memory-view h2 {
+    margin-bottom: 0.5rem;
+}
+
+.final-memory-view p {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.final-memory-view .btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.final-memory-view .btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.final-memory-view .btn-primary:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
 }
 

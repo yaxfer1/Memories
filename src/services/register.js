@@ -1,6 +1,6 @@
-const ENDPOINT = 'https://deno-api-users-login.herokuapp.com'
+const ENDPOINT = 'http://127.0.0.1:5000/api';
 
-export default function register ({ username, password }) {
+export default function register ( {username, password} ) {
     return fetch(`${ENDPOINT}/register`, {
         method: 'POST',
         headers: {
@@ -9,6 +9,6 @@ export default function register ({ username, password }) {
         body: JSON.stringify({username, password})
     }).then(res => {
         if (!res.ok) throw new Error('Response is NOT ok')
-        return true
+        return res.json()
     })
 }

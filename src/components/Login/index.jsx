@@ -7,8 +7,10 @@ import './index.css'
 export default function Login({onLogin}) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [isRegistering, setIsRegistering] = useState(false);
+    const [registerError, setRegisterError] = useState(false);
     const navigate = useNavigate()
-    const {isLoginLoading, hasLoginError, login, isLogged} = useUser()
+    const {isLoginLoading, hasLoginError, login, isLogged, register} = useUser()
 
     useEffect(() => {
         if (isLogged) {
@@ -19,8 +21,26 @@ export default function Login({onLogin}) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        login({ username, password })
+        if (isRegistering) {
+            setRegisterError(false);
+            register({ username, password })
+                .then(() => {
+                    // Si el registro es exitoso, hacer login automáticamente
+                    login({ username, password });
+                })
+                .catch(() => {
+                    setRegisterError(true);
+                });
+        } else {
+            login({ username, password });
+        }
     };
+
+    const handleRegister = (e) => {
+        e.preventDefault();
+        setIsRegistering(!isRegistering);
+        setRegisterError(false);
+    }
 
     return (
         <>
@@ -47,11 +67,19 @@ export default function Login({onLogin}) {
                         />
                     </label>
 
-                    <button className='btn' type="submit"><strong>Login</strong></button>
+                    <button className='btn' type="submit">
+                        <strong>{isRegistering ? 'Register' : 'Login'}</strong>
+                    </button>
+                    <button className='btn' onClick={handleRegister}>
+                        <strong>{isRegistering ? 'Back to Login' : 'Go to Register'}</strong>
+                    </button>
                 </form>
             }
-            {
-                hasLoginError && <strong className="form-error">Credentials are invalid</strong>
+            {hasLoginError && !isRegistering && 
+                <strong className="form-error">Credentials are invalid</strong>
+            }
+            {registerError && isRegistering && 
+                <strong className="form-error">Registration failed. Try a different username.</strong>
             }
         </>
     );

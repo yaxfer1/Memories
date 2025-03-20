@@ -2,6 +2,8 @@
 import {useEffect, useState, useRef} from "react";
 import {
     Button,
+    ListGroup,
+    Modal
 } from "react-bootstrap";
 import "./styles.css";
 import {Report, AgentAction} from "../types";
@@ -15,6 +17,7 @@ import deleteButton from "../assets/deleteButton.svg";
 import deleteChatService from "../services/deleteChat.ts";
 import { useLocation, useParams } from "react-router-dom";
 import getFromReport from "../services/getFromReport.ts";
+import { FinalMemoryView } from './FinalMemoryView';
 
 
 export const ReportList = () => {
@@ -163,6 +166,24 @@ useEffect(() => {
                             </Link>
                         </div>
                     ))}
+                    <div className="chat-content">
+                                    <span><strong>End Report</strong></span>
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            //handleDeleteChat(chat.id);
+                                        }}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            padding: 0,
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }}
+                    ></button>
+                </div>
             </div>
         </div>
     );

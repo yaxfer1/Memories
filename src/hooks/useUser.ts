@@ -3,6 +3,8 @@ import { Chat } from "../types"; // Ajusta la ruta según tu estructura
 import { useNavigate } from "react-router-dom";
 //@ts-expect-error
 import loginService from "../services/login.js";
+//@ts-expect-error
+import registerService from "../services/register.js";
 import addChatService from "../services/addChat.ts";
 import { useStore } from "./useStore.tsx"; // Asegúrate de importar el useStore actualizado
 import { Company, Memory } from "../types";
@@ -42,10 +44,25 @@ export default function useUser() {
         [setJWT] // Dependencia de setJWT
     );
 
-    // Logout
+    const register = useCallback(
+        async ({ username, password }: { username: string; password: string }) => {
+            setState({ loading: true, error: false });
 
-    //const logoutmemo = useMemo(() => ({ logout }), [logout])
-    // Load chats from the server
+            try {
+                const response = await registerService({ username, password });
+                if (!response.success) {
+                    throw new Error('Registration failed');
+                }
+                setState({ loading: false, error: false });
+                return response;
+            } catch (err) {
+                setState({ loading: false, error: true });
+                throw err; // Re-lanzar el error para manejarlo en el componente
+            }
+        },
+        [] // No hay dependencias necesarias
+    );
+
     const loadChats = useCallback(async () => {
         console.log("JWT:", jwt);
         if (!jwt) return;
@@ -205,5 +222,6 @@ export default function useUser() {
         currentChatId,
         addChatUser,
         deleteChat,
+        register,
     };
 }

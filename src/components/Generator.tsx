@@ -116,6 +116,7 @@ function Generator () {
                             value={text1}
                             onChange={changeText1}
                             showAdditionalContent={!generatorAdditionalContent}
+                            isSelectedBusinessAndMemory={isSelectedBusinessAndMemory}
                         />
                         
                         {generatorAdditionalContent && (actions.length > 0 &&(<AgentActionsList></AgentActionsList>))}
@@ -126,6 +127,7 @@ function Generator () {
                                 value={text3}
                                 onChange={changeText3}
                                 showAdditionalContent={generatorAdditionalContent}
+                                isSelectedBusinessAndMemory={isSelectedBusinessAndMemory}
                             />
                         )}
                         
