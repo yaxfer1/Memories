@@ -3,145 +3,210 @@ import {useEffect, useState, useRef} from "react";
 import {
     Button,
     ListGroup,
-    Modal
+    Modal,
+    Form
 } from "react-bootstrap";
 import "./styles.css";
 import {Report, AgentAction} from "../types";
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom"
 //import ChatBox from "./ChatBox.tsx";
 import {useStore} from "../hooks/useStore.tsx"
 //@ts-expect-error
 import getChatMessages from "../services/getChatMessages.js";
 import addReportService from "../services/addReport.ts";
 import deleteButton from "../assets/deleteButton.svg";
-import deleteChatService from "../services/deleteChat.ts";
+import editIcon from "../assets/edit.svg";
+import deleteReportService from "../services/deleteReport.ts";
+import renameReportService from "../services/renameReport.ts";
 import { useLocation, useParams } from "react-router-dom";
 import getFromReport from "../services/getFromReport.ts";
-import { FinalMemoryView } from './FinalMemoryView';
-
+import menuButton from "../assets/menuButton.svg";
+import newC from "../assets/newA.svg";
 
 export const ReportList = () => {
-    const [isEditing, setIsEditing] = useState(false);
-    const [reportName, setReportName] = useState("");
-    const inputRef = useRef<HTMLInputElement>(null);
-    const { setAdditionalContentGenerator, setActions, actions, text1, text3, changeText1, changeText3, addReport, jwt, currentReportId, setCurrentReportId, reports, setReports, selectedMemoryId, setResult} = useStore();
-    const handleNewReport = async () => {
-        try {
-            const reportsadded = await addReportService(jwt, selectedMemoryId,reportName);
-            console.log("Reporte añadido:", reportsadded);
-    
-            const repId = reportsadded;
-            console.log("repId")
-            console.log(repId)
-            addReport({ id: repId, name: reportName, text1: "", text2: "", tools_result:[], result:"" });
-        } catch (error) {
-            console.error("Error at handling new report:", error);
+    const navigate = useNavigate();
+    const { isCollapsed, setIsCollapsed, deleteReport, setAdditionalContentGenerator, setActions, changeText1, changeText3, addReport, jwt, currentReportId, setCurrentReportId, reports, selectedMemoryId, setResult, setIsFinalMemory, isFinalMemory, setSingleReport } = useStore();
+    const [editingReportId, setEditingReportId] = useState<bigint | null>(null);
+    const [editedReportName, setEditedReportName] = useState("");
+    const editInputRef = useRef<HTMLInputElement>(null);
+
+    const handleButNewReport = () => {
+        navigate('/home/generator');
+        setAdditionalContentGenerator(false);
+        setIsFinalMemory(false);
+    }
+
+    const toggleCollapse = () => {
+        setIsCollapsed(!isCollapsed);
+    }
+
+    // Manejador para iniciar la edición de un reporte
+    const handleEditReportName = (report: Report, e: React.MouseEvent) => {
+        //e.preventDefault();
+        //e.stopPropagation();
+        setEditingReportId(report.id);
+        setEditedReportName(report.name);
+        
+        // Enfoque del input en el siguiente ciclo de renderizado
+        setTimeout(() => {
+            if (editInputRef.current) {
+                editInputRef.current.focus();
+                editInputRef.current.select();
+            }
+        }, 10);
+    };
+
+    // Manejador para guardar el nuevo nombre
+    const handleSaveReportName = async (reportId: bigint) => {
+        if (editedReportName.trim()) {
+            try {
+                // Llamar al servicio de backend para actualizar el nombre
+                await renameReportService(reportId, editedReportName);
+                
+                // Buscar el reporte que estamos editando
+                const reportToUpdate = reports.find(r => r.id === reportId);
+                
+                if (reportToUpdate) {
+                    // Actualizar el reporte en el estado
+                    const updatedReport = {
+                        ...reportToUpdate,
+                        name: editedReportName
+                    };
+                    
+                    setSingleReport(updatedReport);
+                }
+                
+                // Resetear el estado de edición
+                setEditingReportId(null);
+                setEditedReportName("");
+            } catch (error) {
+                console.error("Error al actualizar el nombre del reporte:", error);
+            }
+        } else {
+            // Si el nombre está vacío, dejarlo como estaba
+            setEditingReportId(null);
         }
     };
 
-
-
-    const handleClickOutside = (e: MouseEvent) => {
-        if (inputRef.current && !inputRef.current.contains(e.target as Node)) {
-            handleSubmit();
-        }
-    };
-
-    useEffect(() => {
-        if (isEditing) {
-            document.addEventListener("mousedown", handleClickOutside);
-            inputRef.current?.focus();
-        }
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [isEditing]);
-
-    const handleSubmit = () => {
-        if (reportName.trim()) {
-            handleNewReport();
-        }
-        setIsEditing(false);
-        setReportName("");
-    };
-
-    const handleKeyPress = (e: React.KeyboardEvent) => {
+    // Manejador para gestionar la pulsación de teclas durante la edición
+    const handleKeyDown = (e: React.KeyboardEvent, reportId: bigint) => {
         if (e.key === 'Enter') {
-            handleSubmit();
+            e.preventDefault();
+            handleSaveReportName(reportId);
+        } else if (e.key === 'Escape') {
+            setEditingReportId(null);
+            setEditedReportName("");
         }
     };
 
     const handleSelectReportWrapper = (reportId: bigint) => {
+        // Si estamos editando, no seleccionar el reporte
+        if (editingReportId !== null) return;
+        
+        setIsFinalMemory(false)
         handleSelectReport(reportId, setCurrentReportId, reports, changeText1, changeText3, setResult, setAdditionalContentGenerator, setActions)
-      };
-
-      const location = useLocation();
-const { reportId } = useParams(); 
-
-useEffect(() => {
-  if (currentReportId) {
-    handleSelectReportWrapper(BigInt(currentReportId)); 
-  }
-}, []); 
-
-    const handleDeleteChat = async (reportId: bigint) => {
-        console.log(reportId);
-        //deleteChat(chatId);
-        //console.log(chats)
-        try {
-            const response = await deleteChatService(reportId);  
-            console.log(response)
-        } catch (error) {
-            console.error("Error obteniendo los mensajes del chat:", error);
-        }
-
     };
-    return (
-        <div className={"col-list"}>
-            {isEditing ? (
-                <input
-                    ref={inputRef}
-                    type="text"
-                    value={reportName}
-                    onChange={(e) => setReportName(e.target.value)}
-                    onKeyDown={handleKeyPress}
-                    style={{
-                        width: '100%',
-                        padding: '8px',
-                        border: '1px solid #ccc',
-                        borderRadius: '4px',
-                        outline: 'none',
-                    }}
-                    placeholder="Enter report name..."
-                />
-            ) : (
-                <Button 
-                    onClick={() => setIsEditing(true)} 
-                    className="new-chat-button"
-                    bsPrefix="custom-button"
-                >
-                    New Report
 
-                </Button>
-            )}
-            <div className="chat-list">
-                {reports
-                    .slice()
-                    .reverse()
-                    .map((report) => (
-                        <div key={report.id.toString()} className="chat-item">
-                            <Link
-                                to={`/home/generator/${report.id.toString()}`}
-                                onClick={() => handleSelectReportWrapper(report.id)}
-                                className="chat-link"
-                            >
-                                <div className="chat-content">
+    const handleDeleteReport = async (reportId: bigint) => {
+        console.log(reportId);
+        try {
+            const response = await deleteReportService(reportId);  
+            console.log(response);
+            deleteReport(reportId);
+        } catch (error) {
+            console.error("Error al eliminar reporte:", error);
+        }
+    };
+
+    const handleEndReport = () => {
+        setAdditionalContentGenerator(true)
+        setIsFinalMemory(true)
+    }
+
+    // Manejador para cancelar la edición si se hace clic fuera del input
+    const handleClickOutside = (e: MouseEvent) => {
+        if (editingReportId !== null && editInputRef.current && !editInputRef.current.contains(e.target as Node)) {
+            handleSaveReportName(editingReportId);
+        }
+    };
+
+    useEffect(() => {
+        // Agregar event listener para detectar clics fuera del input
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [editingReportId, editedReportName]);
+
+    return (
+        <div className="chat-list">
+            <button 
+                onClick={handleButNewReport} 
+                className="new-chat-button"
+            >
+                <img 
+                    src={newC} 
+                    alt="New Report"
+                    style={{
+                        width: '20px',
+                        height: '20px'
+                    }}
+                    className="svg-button"
+                />
+            </button>
+            
+            {reports
+                .slice()
+                .reverse()
+                .map((report) => (
+                    <div key={report.id.toString()} className="chat-item">
+                        <Link
+                            to={`/home/generator/${report.id.toString()}`}
+                            onClick={() => handleSelectReportWrapper(report.id)}
+                            className="chat-link"
+                        >
+                            <div className={`chat-content ${report.id === currentReportId ? 'active' : ''}`}>
+                                {editingReportId === report.id ? (
+                                    <input
+                                        ref={editInputRef}
+                                        className="inline-edit-input"
+                                        value={editedReportName}
+                                        onChange={(e) => setEditedReportName(e.target.value)}
+                                        onKeyDown={(e) => handleKeyDown(e, report.id)}
+                                        onBlur={() => handleSaveReportName(report.id)}
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                ) : (
                                     <span>{report.name}</span>
+                                )}
+                                <div className="chat-actions">
+                                    <button
+                                        onClick={(e) => handleEditReportName(report, e)}
+                                        style={{
+                                            background: 'none',
+                                            border: 'none',
+                                            padding: 0,
+                                            marginRight: '8px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <img 
+                                            src={editIcon} 
+                                            alt="Edit"
+                                            style={{
+                                                width: '16px',
+                                                height: '16px'
+                                            }}
+                                            className="svg-button"
+                                        />
+                                    </button>
                                     <button
                                         onClick={(e) => {
                                             e.preventDefault();
                                             e.stopPropagation();
-                                            //handleDeleteChat(chat.id);
+                                            handleDeleteReport(report.id);
                                         }}
                                         style={{
                                             background: 'none',
@@ -163,28 +228,29 @@ useEffect(() => {
                                         />
                                     </button>
                                 </div>
-                            </Link>
-                        </div>
-                    ))}
-                    <div className="chat-content">
-                                    <span><strong>End Report</strong></span>
-                                    <button
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            //handleDeleteChat(chat.id);
-                                        }}
-                                        style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            padding: 0,
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            alignItems: 'center'
-                                        }}
-                    ></button>
-                </div>
+                            </div>
+                        </Link>
+                    </div>
+                ))}
+            <Link
+                to={`/home/generator/result`}
+                onClick={() => handleEndReport()}
+                className="chat-link"
+            >
+                <div className={`chat-content ${isFinalMemory ? 'active' : ''}`}>
+                <span><strong>End Report</strong></span>
+                           <button
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        padding: 0,
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center'
+                                    }}
+                ></button>
             </div>
+            </Link>
         </div>
     );
 };

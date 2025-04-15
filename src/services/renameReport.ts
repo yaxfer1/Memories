@@ -1,15 +1,13 @@
 const ENDPOINT = 'http://127.0.0.1:5000/api';
 
-export default function addReportService( jwt: string, memory_id: bigint, report_name: string ) {
-    console.log("ADD REPORT SERVICE")
-    const memory_ids = memory_id.toString()
-    return fetch(`${ENDPOINT}/add_report_to_memory`, {
+export default function renameReportService( report_id: bigint, report_name: string ) {
+    console.log("rep_id: ", report_id)
+    return fetch(`${ENDPOINT}/rename_report`, {
         method: 'POST',
         headers: {
-            "Authorization": jwt,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ jwt, memory_ids ,report_name })
+        body: JSON.stringify({ report_id, report_name })
     })
         .then(res => {
             if (!res.ok) throw new Error('Response is NOT ok');

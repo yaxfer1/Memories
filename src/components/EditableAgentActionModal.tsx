@@ -53,9 +53,15 @@ const EditableAgentActionModal: React.FC<EditableAgentActionModalProps> = ({
       <Modal.Body>
         {/* Campo editable para la herramienta */}
         <Form.Group controlId="formTool">
-          <Form.Label>Herramienta</Form.Label>
+          <Form.Label><strong>Tool</strong></Form.Label>
           <Form.Control
             type="text"
+            style={{    
+              border: "1px solid #0d0d0d",
+              fontSize: '1em',
+              backgroundColor: 'white',
+              boxShadow: "none",
+          }}
             value={editedTool}
             onChange={(e) => setEditedTool(e.target.value)}
           />
@@ -63,34 +69,44 @@ const EditableAgentActionModal: React.FC<EditableAgentActionModalProps> = ({
 
         {/* Campo editable para la Query */}
         <Form.Group controlId="formQuery" className="mt-3">
-          <Form.Label>Query</Form.Label>
+          <Form.Label><strong>Query</strong></Form.Label>
           <Form.Control
             as="textarea"
             rows={6}
             value={editedQuery}
             onChange={(e) => setEditedQuery(e.target.value)}
-            style={{ resize: 'none' }}
+            style={{    
+              border: "1px solid #0d0d0d",
+              fontSize: '1em',
+              backgroundColor: 'white',
+              boxShadow: "none",
+          }}
           />
         </Form.Group>
 
         {/* Campo editable para el Resultado */}
         <Form.Group controlId="formResult" className="mt-3">
-          <Form.Label>Resultado</Form.Label>
+          <Form.Label><strong>Result</strong></Form.Label>
           <Form.Control
             as="textarea"
             rows={6}
             value={editedResult}
             onChange={(e) => setEditedResult(e.target.value)}
-            style={{ resize: 'none' }}
+            style={{    
+              border: "1px solid #0d0d0d",
+              fontSize: '1em',
+              backgroundColor: 'white',
+              boxShadow: "none",
+          }}
           />
         </Form.Group>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleCancel}>
-          Cancelar
+        <Button className="cancel-button" onClick={handleCancel}>
+          Cancel
         </Button>
-        <Button variant="primary" onClick={handleSaveChanges}>
-          Guardar Cambios
+        <Button className="save-button" onClick={handleSaveChanges}>
+          Save
         </Button>
       </Modal.Footer>
     </Modal>

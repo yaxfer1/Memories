@@ -10,24 +10,29 @@ import MainHeader from "../components/MainHeader.tsx";
 // @ts-expect-error
 import DropdownMenu from '../components/DropdownMenu.jsx';
 import DragAndDrop from '../components/DragAndDrop.tsx';
-import UrlInput from '../components/UrlInput.js';
+import UrlInput from '../components/UrlInput.tsx';
 import ChatList from '../components/ChatList.tsx';
 import Generator from '../components/Generator.tsx';
 import ReportList from '../components/ReportList.tsx';
 import useUser from '../hooks/useUser.ts';
+
 function HomePage () {
     const{
         chat,
         chats,
         setChat,
         setCurrentChatId,
-        setIsSelectedCompanyAndMemory
+        setIsSelectedCompanyAndMemory,
+        isRightColumnVisible,
+        rightColumnMode,
+        setRightColumnVisible,
+        setRightColumnMode,
+        isCollapsed,
+        setIsCollapsed
     } = useStore();
     const {addChatUser} = useUser();
-    const [hovering, setHovering] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
-    //setIsSelectedCompanyAndMemory(false);
     // Determinar si estamos en modo chat basado en la URL
     const isInChatMode = location.pathname.includes('/home/chat');
 
@@ -45,95 +50,63 @@ function HomePage () {
         }
     }
 
-    const handleMouseHover = useCallback(() => {
-        setHovering(prev => prev || true);
-    }, []);
+    // Funciones para controlar la columna derecha
+    const toggleRightColumn = () => {
+        setRightColumnVisible(!isRightColumnVisible);
+    };
 
-    const handleMouseLeave = useCallback(() => {
-        setHovering(prev => prev && false);
-    }, []);
+    const toggleLeftColumn = () => {
+        setIsCollapsed(!isCollapsed);
+    };
+
+    const setFilesMode = () => {
+        setRightColumnMode('files');
+        if (!isRightColumnVisible) {
+            setRightColumnVisible(true);
+        }
+    };
+
+    const setUrlsMode = () => {
+        setRightColumnMode('urls');
+        if (!isRightColumnVisible) {
+            setRightColumnVisible(true);
+        }
+    };
 
     return (
         <Container style={{margin: '0' , padding:'0', width:'100vw', height:'100vh', overflow:'hidden'}}>
-            <MainHeader boton={handleSetChat} chat={!isInChatMode} />
+            <div className={`side-column left-column ${isCollapsed ? 'collapsed' : ''}`}>
+                {isInChatMode ? <ChatList chats={chats} setCurrentChatID={setCurrentChatId} /> : <ReportList />}
+            </div>
             
-            <Col
-                style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "10vh",
-                    width: "18vw",
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100%",
-                    overflowY: "auto",
-                    zIndex: "0",
-                }}
-            >
-                <div
-                    style={{
-                        flex: "1", 
-                        overflowY: "auto", 
-                        borderBottom: "1px solid #ccc", 
-                    }}
-                >
-                    <DragAndDrop />
-                </div>
-
-                <div
-                    style={{
-                        flex: "1", 
-                        overflowY: "auto", 
-                    }}
-                >
-                    <UrlInput />
-                </div>
-            </Col>
+            <MainHeader 
+                boton={handleSetChat} 
+                chat={!isInChatMode} 
+                isLeftCollapsed={isCollapsed}
+                toggleLeftColumn={toggleLeftColumn}
+            />
             
-            {isInChatMode && (
-                <Col style={{
-                    position: "absolute",
-                    left: "0px",
-                    top: "0vh",
-                    width: "18vw",
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100vh",
-                }}>
-                    <ChatList
-                        chats={chats}
-                        setCurrentChatID={setCurrentChatId}
-                    ></ChatList>
-                </Col>
-            )}
+            <div className={`main-content ${isCollapsed ? 'with-left-collapsed' : ''} ${isRightColumnVisible ? 'with-right-column' : ''}`}>
+                <Outlet />
+            </div>
+            
 
-            {!isInChatMode && (
-                <Col style={{
-                    position: "absolute",
-                    left: "0px",
-                    top: "0vh",
-                    width: "18vw",
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "100vh",
-                }}>
-                    <ReportList></ReportList>
-                </Col>
-            )}
-
-            {/* El contenedor principal siempre muestra el Outlet que cargará el componente correcto */}
-            <Container 
-                className={isInChatMode ? "containerChat" : "containerGenerator"} 
-                style={{
-                    marginTop:'8vh', 
-                    marginLeft: '18vw',
-                    width: isInChatMode ? '62vw' : '60vw', 
-                    height: '92vh', 
-                    overflow: 'hidden'
-                }}
-            >
-                <Outlet/>
-            </Container>
+            
+            {/* Columna derecha con modo dinámico */}
+            <div className={`side-column right-column ${!isRightColumnVisible ? 'hidden' : ''}`}>
+                <div className="right-column-header">
+                    <h3 className="right-column-title">
+                        {rightColumnMode === 'files' ? 'Archivos' : 'URLs'}
+                    </h3>
+                </div>
+                <div className="right-column-content">
+                    {rightColumnMode === 'files' ? (
+                        <DragAndDrop />
+                    ) : (
+                        <UrlInput />
+                    )}
+                </div>
+            </div>
         </Container>
     );
 }

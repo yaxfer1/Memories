@@ -1,6 +1,9 @@
 const AI_CHAT = "http://127.0.0.1:5000/api/ai_chat";
 
 export const postChat = async (jwt, chatId, message) => {
+    // Convertir el BigInt a String para solucionar el problema de serialización
+    const chatIdString = chatId.toString();
+    console.log("chatIdString: " + chatIdString)
     try {
         // Obtener el JWT almacenado en sessionStorage
 
@@ -10,7 +13,7 @@ export const postChat = async (jwt, chatId, message) => {
 
         // Crear el cuerpo de la petición
         const bodyData = {
-            id: chatId,
+            id: chatIdString,
             message: message,
             jwt: jwt
         };

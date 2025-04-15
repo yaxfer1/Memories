@@ -21,7 +21,7 @@ export const EditableReportResultModal: React.FC<EditableReportResultModalProps>
     useEffect(() => {
         if (report) {
             setEditedName(report.name);
-            setEditedResult(report.result);
+            setEditedResult(report.RESULT);
         }
     }, [report]);
 
@@ -30,7 +30,7 @@ export const EditableReportResultModal: React.FC<EditableReportResultModalProps>
             onSave({
                 ...report,
                 name: editedName,
-                result: editedResult,
+                RESULT: editedResult,
             });
         }
     };
@@ -43,17 +43,30 @@ export const EditableReportResultModal: React.FC<EditableReportResultModalProps>
             <Modal.Body>
                 <Form>
                     <Form.Group className="mb-3">
-                        <Form.Label>Report Name</Form.Label>
+                        <Form.Label><strong>Report Name</strong></Form.Label>
                         <Form.Control
                             type="text"
+                            style={{    
+                                border: "1px solid #0d0d0d",
+                                fontSize: '1em',
+                                backgroundColor: 'white',
+                                boxShadow: "none",
+                            }}
                             value={editedName}
                             onChange={(e) => setEditedName(e.target.value)}
                         />
                     </Form.Group>
                     <Form.Group className="mb-3">
-                        <Form.Label>Report Result</Form.Label>
+                        <Form.Label><strong>Report Result</strong></Form.Label>
                         <Form.Control
                             as="textarea"
+                            style={{    
+                                border: "1px solid #0d0d0d",
+                                height: '500px',
+                                fontSize: '1em',
+                                backgroundColor: 'white',
+                                boxShadow: "none",
+                            }}
                             rows={10}
                             value={editedResult}
                             onChange={(e) => setEditedResult(e.target.value)}
@@ -62,12 +75,12 @@ export const EditableReportResultModal: React.FC<EditableReportResultModalProps>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="secondary" onClick={onClose}>
+                <button className="cancel-button" onClick={onClose}>
                     Cancel
-                </Button>
-                <Button variant="primary" onClick={handleSave}>
+                </button>
+                <button className="save-button" onClick={handleSave}>
                     Save Changes
-                </Button>
+                </button>
             </Modal.Footer>
         </Modal>
     );

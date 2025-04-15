@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useReducer, useMemo, ReactNode, memo } from 'react';
 import { Chat, State, Action, Company, Memory, AgentAction, Report } from '../types';
 
 // Estado inicial
@@ -16,7 +16,7 @@ const initialState: State = {
     editedText: '',
     email: '',
     password: '',
-    currentChatId: 1n,
+    currentChatId: 0n,
     chats: [], 
     jwt: "", 
     companies: [],
@@ -33,6 +33,12 @@ const initialState: State = {
     generatorAdditionalContent: false,
     isSelectedBusinessAndMemory: false,
     finalMemory: '',
+    isFinalMemory: false,
+    isGeneratedResult: false,
+    isCollapsed: false,
+    isNewChat: true,
+    isRightColumnVisible: true,
+    rightColumnMode: 'files', // 'files' o 'urls'
 };
 
 // Reducer
@@ -104,6 +110,18 @@ function reducer(state: State, action: Action): State {
             return { ...state, companies: action.payload };
         case 'SET_MEMORIES':
             return { ...state, companies: state.companies.map((company)=> company.id === action.payload.selectedCompany ? {...company, memories: action.payload.memories} : company)};
+        case 'SET_SINGLEMEMORY':
+            return {
+                    ...state,
+                    companies: state.companies.map((company) => 
+                        company.id === state.selectedCompanyId 
+                            ? {...company, memories: company.memories.map((memory)=> memory.id === state.selectedMemoryId
+                            ? {...memory, ...action.payload}
+                            : memory
+                            )}
+                            : company
+                    )
+            };
         case 'SET_SUBMITTEDURLS':
             return { ...state, submittedUrls: action.payload };
         case 'SET_FILES':
@@ -116,6 +134,17 @@ function reducer(state: State, action: Action): State {
             return { ...state, reports: [...state.reports, action.payload] };
         case 'SET_REPORTS':
             return { ...state, reports: action.payload };
+        case 'SET_SINGLEREPORT':
+            return {
+                ...state,
+                reports: state.reports.map((report) => 
+                    report.id === state.currentReportId 
+                        ? { ...report, ...action.payload }
+                        : report
+                )
+            };
+        case 'DELETE_REPORT':
+            return { ...state, reports: state.reports.filter((report) => report.id !== action.payload) };
         case 'SET_CURRENTREPORTID':
             return { ...state, currentReportId: action.payload };
         case 'SET_ADDITIONALCONTENTGENERATOR':
@@ -124,6 +153,18 @@ function reducer(state: State, action: Action): State {
             return {...state, isSelectedBusinessAndMemory: action.payload};
         case 'SET_FINALMEMORY':
             return { ...state, finalMemory: action.payload };
+        case 'SET_ISFINALMEMORY':
+            return { ...state, isFinalMemory: action.payload };
+        case 'SET_ISGENERATEDRESULT':
+            return { ...state, isGeneratedResult: action.payload };
+        case 'SET_ISCOLLAPSED':
+            return { ...state, isCollapsed: action.payload};
+        case 'SET_ISNEWCHAT':
+            return { ...state, isNewChat: action.payload};
+        case 'SET_RIGHTCOLUMNVISIBLE':
+            return { ...state, isRightColumnVisible: action.payload };
+        case 'SET_RIGHTCOLUMNMODE':
+            return { ...state, rightColumnMode: action.payload };
         default:
             return state;
     }
@@ -169,6 +210,7 @@ export function useStore() {
     const setPassword = (payload: string) => dispatch({ type: 'SET_PASSWORD', payload });
     const addChat = (payload: Chat) => dispatch({ type: 'ADD_CHAT', payload });
     const deleteChat = (payload: bigint) => dispatch({ type: 'DELETE_CHAT', payload });
+    const deleteReport = (payload: bigint) => dispatch({ type: 'DELETE_REPORT', payload });
     const setCurrentChatId = (payload: bigint) => dispatch({ type: 'SET_CURRENTCHATID', payload });
     const setChats = (payload: Chat[]) => dispatch({ type: 'SET_CHATS', payload });
     const updateChatMessages = (currentChatID: bigint, messages: string[]) =>
@@ -192,6 +234,15 @@ export function useStore() {
     const setAdditionalContentGenerator = (payload: boolean) => dispatch({type: 'SET_ADDITIONALCONTENTGENERATOR', payload});
     const setIsSelectedCompanyAndMemory = (payload: boolean) => dispatch({type: 'SET_ISSELECTEDCOMPANYANDMEMORY', payload});
     const setFinalMemory = (payload: string) => dispatch({ type: 'SET_FINALMEMORY', payload });
+    const setIsFinalMemory = (payload: boolean) => dispatch({type: 'SET_ISFINALMEMORY', payload});
+    const setSingleReport = (payload: Report) => dispatch({type: 'SET_SINGLEREPORT', payload});
+    const setSingleMemory = (payload: Memory) => dispatch({type: 'SET_SINGLEMEMORY', payload});
+    const setIsGeneratedResult = (payload: boolean) => dispatch({type: 'SET_ISGENERATEDRESULT', payload});
+    const setIsCollapsed = (payload: boolean) => dispatch({type: 'SET_ISCOLLAPSED', payload});
+    const setIsNewChat = (payload: boolean) => dispatch({type: 'SET_ISNEWCHAT', payload});
+    const setRightColumnVisible = (payload: boolean) => dispatch({type: 'SET_RIGHTCOLUMNVISIBLE', payload});
+    const setRightColumnMode = (payload: string) => dispatch({type: 'SET_RIGHTCOLUMNMODE', payload});
+
     return {
         ...state,
         setResult,
@@ -230,5 +281,14 @@ export function useStore() {
         setIsSelectedCompanyAndMemory,
         setAdditionalContentGenerator,
         setFinalMemory,
+        setIsFinalMemory,
+        setSingleReport,
+        setSingleMemory,
+        setIsGeneratedResult,
+        deleteReport,
+        setIsCollapsed,
+        setIsNewChat,
+        setRightColumnVisible,
+        setRightColumnMode,
     };
 }

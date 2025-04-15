@@ -15,15 +15,16 @@ export interface Memory {
     id: bigint;
     name: string;
     reports: Report[];
+    result: string;
 }
 
 export interface Report{
     id: bigint;
     name: string;
     tools_result: AgentAction[];
-    text1: string;
-    text2: string;
-    result: string;
+    TEXT1: string;
+    TEXT2: string;
+    RESULT: string;
 }
 
 
@@ -64,6 +65,12 @@ export interface State {
     generatorAdditionalContent: boolean;
     isSelectedBusinessAndMemory: boolean;
     finalMemory: string;
+    isFinalMemory: boolean;
+    isGeneratedResult: boolean;
+    isCollapsed: boolean;
+    isNewChat: boolean;
+    isRightColumnVisible: boolean;
+    rightColumnMode: string;
 }
 
 export type Action =
@@ -85,6 +92,7 @@ export type Action =
     | { type: 'SET_CHATS'; payload: Chat[]}
     | { type: 'SET_JWT'; payload: string}
     | { type: 'DELETE_CHAT'; payload: bigint } 
+    | { type: 'DELETE_REPORT'; payload: bigint } 
     | { type: 'UPDATE_CHAT_MESSAGES'; payload: { currentChatID: bigint; messages: string[] } }
     | { type: 'UPDATE_CHAT_AIMESSAGES'; payload: { currentChatID: bigint; aimessages: string[] } } 
     | { type: 'SET_NEWCOMPANYNAME'; payload: string }
@@ -93,6 +101,7 @@ export type Action =
     | { type: 'SET_SELECTEDMEMORY'; payload: bigint}
     | { type: 'SET_COMPANIES'; payload: Company[] }
     | { type: 'SET_MEMORIES'; payload: {selectedCompany: bigint, memories: Memory[]} }
+    | { type: 'SET_SINGLEMEMORY'; payload: Memory }
     | { type: 'SET_SUBMITTEDURLS'; payload: string[] }
     | { type: 'SET_FILES'; payload: File[] }
     | { type: 'SET_PDFFILENAMES'; payload: string[] }
@@ -103,6 +112,13 @@ export type Action =
     | { type: 'SET_ADDITIONALCONTENTGENERATOR'; payload: boolean}
     | { type: 'SET_ISSELECTEDCOMPANYANDMEMORY'; payload: boolean}
     | { type: 'SET_FINALMEMORY'; payload: string}
+    | { type: 'SET_ISFINALMEMORY'; payload: boolean}
+    | { type: 'SET_ISGENERATEDRESULT'; payload: boolean}
+    | { type: 'SET_SINGLEREPORT'; payload: Report}
+    | { type: 'SET_ISCOLLAPSED'; payload: boolean }
+    | { type: 'SET_ISNEWCHAT'; payload: boolean }
+    | { type: 'SET_RIGHTCOLUMNVISIBLE'; payload: boolean }
+    | { type: 'SET_RIGHTCOLUMNMODE'; payload: string }
 
 export enum SectionType {
     Box1 = 'box1',

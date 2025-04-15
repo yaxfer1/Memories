@@ -61,6 +61,245 @@ nav ul li a.active {
 }
 
 body{
-    fontSize: "1.2em"
+    font-size: 1.2em;
+}
 
+/* Estilos para el layout principal */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.containerChat {
+  display: flex;
+  flex-direction: column;
+  height: 92vh;
+  padding-top: 1rem;
+  overflow: hidden;
+  margin-left: 15vw;
+  transition: margin-left 0.3s ease;
+}
+
+.containerGenerator {
+  display: flex;
+  flex-direction: column;
+  height: 92vh;
+  padding-top: 1rem;
+  margin-left: 15vw;
+  transition: margin-left 0.3s ease;
+}
+
+/* Estilos unificados para las columnas laterales */
+.side-column {
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.left-column {
+  left: 0;
+  width: 15vw;
+  max-width: 240px;
+  min-width: 160px;
+  background-color: #f0f0f0;
+  border-right: 1px solid #e0e0e0;
+  transform: translateX(0);
+}
+
+.left-column.collapsed {
+  transform: translateX(-100%);
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.right-column {
+  right: 0;
+  width: 20vw;
+  border-left: 1px solid #e0e0e0;
+  background-color: #f8f9fa;
+}
+
+.right-column.hidden {
+  transform: translateX(100%);
+  width: 0;
+  visibility: hidden;
+}
+
+.right-column-header {
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.right-column-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.right-column-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+/* Contenido principal */
+.main-content {
+  position: absolute;
+  top: 0;
+  left: 15vw;
+  width: calc(100vw - 15vw);
+  height: 100vh;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.main-content.with-left-collapsed {
+  left: 0;
+  width: 100vw;
+}
+
+.main-content.with-right-column {
+  width: calc(100vw - 15vw - 20vw);
+}
+
+.main-content.with-left-collapsed.with-right-column {
+  width: calc(100vw - 20vw);
+}
+
+/* Estilos para el header principal */
+#mainheader {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: min(4vh, 20px);
+  left: calc(15vw + 10px);
+  width: auto;
+  height: 1vh;
+  justify-content: flex-start;
+  z-index: 20;
+  opacity: 1;
+  padding: 0 10px;
+  transition: left 0.3s ease;
+}
+
+#mainheader.left-collapsed {
+  left: 10px;
+}
+
+/* Botones de la columna derecha */
+.header-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f8f9fa;
+  color: #333;
+  font-size: 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin: 0 5px;
+}
+
+.header-button:hover {
+  background-color: #e9ecef;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.header-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+.header-button.active-mode {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.right-column-controls {
+  position: fixed;
+  top: 15px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+  z-index: 1000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .side-column {
+    width: 100vw !important;
+    z-index: 100;
+  }
+  
+  .left-column {
+    transform: translateX(-100%);
+  }
+  
+  .right-column {
+    transform: translateX(100%);
+  }
+  
+  .left-column.visible,
+  .right-column.visible {
+    transform: translateX(0);
+  }
+  
+  .main-content {
+    left: 0;
+    width: 100vw;
+  }
+  
+  .main-content.with-right-column {
+    width: 100vw;
+  }
+  
+  .right-column-controls {
+    top: 10px;
+    right: 10px;
+  }
+  
+  #mainheader {
+    left: 10px;
+  }
+}
+
+/* Botones de la columna izquierda */
+.toggle-left-column {
+  position: relative;
+  margin-right: 10px;
+  background-color: #f0f0f0;
+  z-index: 1010;
+}
+
+.toggle-left-column:hover {
+  background-color: #e0e0e0;
+}
+
+/* Estilos para los dropdowns */
+.header-dropdown {
+  background-color: #f0f0f0;
+  border-color: #f0f0f0;
+  color: black;
+  transition: margin-left 0.3s ease;
+}
+
+.header-dropdown:hover {
+  background-color: #e0e0e0;
+  border-color: #e0e0e0;
 }
